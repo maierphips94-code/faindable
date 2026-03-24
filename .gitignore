@@ -1,0 +1,12 @@
+# Abhängigkeiten
+node_modules/
+
+# API Key – NICHT committen
+js/config.js
+.env
+
+# macOS
+.DS_Store
+
+# Build-Output
+dist/
