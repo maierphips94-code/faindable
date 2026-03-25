@@ -291,8 +291,55 @@
     .url-input::placeholder { color: rgba(203,195,215,0.45); }
     .url-input:focus {
       outline: none;
-      border-color: rgba(208,188,255,0.60);
-      box-shadow: 0 0 0 3px rgba(208,188,255,0.10);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    /* ── Komet-Rand Animation ──────────────────────────────────────────────── */
+    @property --ca {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    .comet-input-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1.5px;
+      background: conic-gradient(
+        from var(--ca),
+        transparent       0deg,
+        transparent       190deg,
+        rgba(208,188,255,0.04) 208deg,
+        rgba(208,188,255,0.18) 228deg,
+        rgba(208,188,255,0.46) 248deg,
+        rgba(208,188,255,0.82) 263deg,
+        #ecdeff             270deg,
+        rgba(255,255,255,0.96) 274deg,
+        #ecdeff             278deg,
+        rgba(208,188,255,0.62) 288deg,
+        rgba(208,188,255,0.18) 308deg,
+        rgba(208,188,255,0.04) 326deg,
+        transparent       344deg,
+        transparent       360deg
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                    linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: cometSpin 3s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes cometSpin {
+      to { --ca: 360deg; }
+    }
+
+    .comet-input-wrap .url-input {
+      border-color: rgba(149,142,160,0.10);
     }
 
     /* ── Bento Grid Glow ──────────────────────────────────────────────────── */
@@ -384,7 +431,7 @@
       <!-- URL Input -->
       <div class="w-full max-w-xl">
         <div class="flex gap-3 items-stretch">
-          <div class="relative flex-1">
+          <div class="relative flex-1 comet-input-wrap">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
                   style="color: rgba(203,195,215,0.50);">language</span>
             <input id="hero-input"
