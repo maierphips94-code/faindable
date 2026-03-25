@@ -1,7 +1,6 @@
 /**
  * Faindable – Alpine.js Haupt-Komponente
- * Läuft komplett im Browser (Live Server, kein Node.js nötig).
- * Analyse-Logik: js/analyzer.js
+ * Material Design 3 Dark Theme · 3-State Hero Machine
  */
 
 'use strict';
@@ -10,17 +9,30 @@ function faindable() {
   return {
     // ── State ───────────────────────────────────────────────────────────────
     url: '',
-    loading: false,
-    showResults: false,
     urlError: '',
     analyzedUrl: '',
 
+    // 3-State Hero: 'initial' | 'scanning' | 'result'
+    heroState: 'initial',
+
     results: {
-      seo: null,
-      geo: null,
-      overall: null,
+      seo: 0,
+      geo: 0,
+      overall: 0,
       manual_checks: 0,
     },
+
+    // Scan-Schritte
+    scanSteps: [
+      { label: 'Verbinde mit Server ...', code: 'TCP_HANDSHAKE_OK',          progress: 12 },
+      { label: 'Crawle Metadaten ...',    code: 'EXTRACTING_DOM_RESOURCES',   progress: 25 },
+      { label: 'Berechne SEO-Score ...',  code: 'RANKING_FACTOR_EVAL',        progress: 45 },
+      { label: 'Berechne GEO-Score ...',  code: 'GEO_ENGINE_SCANNING',        progress: 70 },
+      { label: 'Erstelle Report ...',     code: 'FINALIZING_RESULTS',         progress: 92 },
+      { label: 'Fertig!',                code: 'SUCCESS',                    progress: 100 },
+    ],
+    currentScanStep: 0,
+    scanProgress: 15,
 
     // Modal
     modalOpen: false,
@@ -30,9 +42,24 @@ function faindable() {
 
     // ── Init ─────────────────────────────────────────────────────────────────
     init() {
+      this._setupScrollReveal();
       this.$watch('analyzedUrl', val => {
         if (val && !this.form.website) this.form.website = val;
       });
+    },
+
+    // ── Scroll Reveal ────────────────────────────────────────────────────────
+    _setupScrollReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('[data-fade]').forEach(el => observer.observe(el));
     },
 
     // ── Validierung ──────────────────────────────────────────────────────────
@@ -63,76 +90,134 @@ function faindable() {
       const err = this.validateUrl(this.url);
       if (err) { this.urlError = err; return; }
 
-      this.loading     = true;
-      this.showResults = false;
-      this.results     = { seo: 0, geo: 0, overall: 0, manual_checks: 0 };
+      // Scanning-State aktivieren
+      this.heroState = 'scanning';
+      this.currentScanStep = 0;
+      this.scanProgress = this.scanSteps[0].progress;
 
-      // Sofort zur Lade-Animation scrollen
-      await this.$nextTick();
-      document.getElementById('loading-section')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Per-Step-Delays (ms): wie lange bleibt jeder Schritt aktiv bevor der nächste kommt
+      // SEO (Index 2) und GEO (Index 3) dauern am längsten
+      const stepDelays = [450, 500, 2100, 2200];
+
+      let stepIndex = 0;
+
+      // Animation läuft parallel zur API — stoppt bei Index 3
+      const animPromise = new Promise(resolve => {
+        const advance = idx => {
+          setTimeout(() => {
+            stepIndex = idx + 1;
+            this.currentScanStep = stepIndex;
+            this.scanProgress = this.scanSteps[stepIndex].progress;
+            if (idx + 1 < stepDelays.length) advance(idx + 1);
+            else resolve();
+          }, stepDelays[idx]);
+        };
+        advance(0);
+      });
 
       try {
-        // analyzeUrl kommt aus js/analyzer.js
-        const data = await analyzeUrl(this.url);
+        // Warte auf API UND darauf, dass die Animation mindestens Schritt 3 erreicht hat
+        const [data] = await Promise.all([analyzeUrl(this.url), animPromise]);
 
+        // Schritt 4: "Erstelle Report..." nur kurz aufblitzen
+        this.currentScanStep = 4;
+        this.scanProgress = this.scanSteps[4].progress;
+        await this._sleep(180);
+
+        // Schritt 5: "Fertig!" — kurz grün leuchten lassen
+        this.currentScanStep = this.scanSteps.length - 1;
+        this.scanProgress = 100;
         this.analyzedUrl = data.analyzed_url || this.url;
 
-        // Alle Schritte als erledigt markieren
-        document.querySelectorAll('[x-data*="loadingSteps"]').forEach(el => {
-          if (el._x_dataStack) {
-            const comp = el._x_dataStack[0];
-            if (comp?.steps) {
-              comp.steps.forEach((s, i) => {
-                s.state = 'done';
-                if (!s.duration) s.duration = 800 + i * 200;
-              });
-            }
-          }
-        });
+        await this._sleep(280);
+        this.heroState = 'result';
 
-        await this._sleep(400);
-        this.loading = false;    // Loading-Section erst wegblenden …
-        this.showResults = true; // … dann Ergebnisse einblenden
-
-        // Warten bis beide Transitionen abgeschlossen sind (leave 200ms + enter 500ms)
-        await this._sleep(600);
-        const el = document.getElementById('results');
-        if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY - 24;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }
-
-        // Score-Animationen gestaffelt starten
-        await this._sleep(200);
+        // Score-Animationen gestaffelt
+        await this._sleep(300);
         await this._animateScore('seo',     data.seo);
-        await this._sleep(150);
+        await this._sleep(120);
         await this._animateScore('geo',     data.geo);
-        await this._sleep(150);
+        await this._sleep(120);
         await this._animateScore('overall', data.overall);
 
         this.results.manual_checks = data.manual_checks ?? 0;
 
+        // Scroll zu Ergebnis
+        await this._sleep(300);
+        const el = document.getElementById('hero');
+        if (el) {
+          window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+        }
+
       } catch (err) {
         console.error('[Faindable]', err);
+        this.heroState = 'initial';
         const known = /nicht erreichbar|zu lange gedauert|vollständige URL|gültige Domain/;
         this.urlError = known.test(err?.message)
           ? err.message
           : 'Etwas ist schiefgelaufen. Bitte in Kürze erneut versuchen.';
-      } finally {
-        this.loading = false;
       }
+    },
+
+    // ── Reset ────────────────────────────────────────────────────────────────
+    resetAnalysis() {
+      this.heroState = 'initial';
+      this.results = { seo: 0, geo: 0, overall: 0, manual_checks: 0 };
+      this.url = '';
+      this.urlError = '';
+      this.analyzedUrl = '';
+      this.currentScanStep = 0;
+      this.scanProgress = 15;
+    },
+
+    // ── Score-Hints ──────────────────────────────────────────────────────────
+    getSeoHints(score) {
+      if (score == null) return [];
+      const hints = [];
+      if (score >= 80) {
+        hints.push({ type: 'success', text: 'Title & Meta-Description optimal' });
+        hints.push({ type: 'success', text: 'E-E-A-T-Signale vorhanden' });
+      } else if (score >= 60) {
+        hints.push({ type: 'success', text: 'Grundstruktur solide' });
+        hints.push({ type: 'warning', text: 'Meta-Tags optimierbar' });
+      } else if (score >= 40) {
+        hints.push({ type: 'warning', text: 'Title oder Description fehlt/zu kurz' });
+        hints.push({ type: 'warning', text: 'H1-Struktur verbessern' });
+      } else {
+        hints.push({ type: 'error', text: 'Kritische SEO-Faktoren fehlen' });
+        hints.push({ type: 'warning', text: 'Keine Structured Data gefunden' });
+      }
+      return hints;
+    },
+
+    getGeoHints(score) {
+      if (score == null) return [];
+      const hints = [];
+      if (score >= 80) {
+        hints.push({ type: 'success', text: 'Schema.org vollständig' });
+        hints.push({ type: 'success', text: 'KI-Crawler können Inhalte einordnen' });
+      } else if (score >= 60) {
+        hints.push({ type: 'success', text: 'Basis-Schema vorhanden' });
+        hints.push({ type: 'warning', text: 'Entity-Verknüpfungen ergänzen' });
+      } else if (score >= 40) {
+        hints.push({ type: 'warning', text: 'Schema.org nur teilweise' });
+        hints.push({ type: 'warning', text: 'FAQPage oder Article fehlt' });
+      } else {
+        hints.push({ type: 'error', text: 'Kein Schema.org gefunden' });
+        hints.push({ type: 'error', text: 'Für KI-Suche nicht optimiert' });
+      }
+      return hints;
     },
 
     // ── Score-Animation (0 → Ziel, Ease-Out-Cubic) ──────────────────────────
     _animateScore(key, target) {
       return new Promise(resolve => {
-        const DURATION = 1400;
+        const DURATION = 1200;
         const start    = performance.now();
 
         const tick = now => {
-          const p       = Math.min((now - start) / DURATION, 1);
-          const eased   = 1 - Math.pow(1 - p, 3);
+          const p     = Math.min((now - start) / DURATION, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
           this.results[key] = Math.round(eased * target);
 
           if (p < 1) requestAnimationFrame(tick);
@@ -151,12 +236,12 @@ function faindable() {
     },
 
     // ── Score-Farbe ──────────────────────────────────────────────────────────
-    getScoreColor(score, alpha = 1) {
-      if (score == null) return `rgba(100,116,139,${alpha})`;
-      if (score >= 80)   return `rgba(16,185,129,${alpha})`;   // grün
-      if (score >= 60)   return `rgba(30,58,95,${alpha})`;   // violet
-      if (score >= 40)   return `rgba(245,158,11,${alpha})`;   // gelb
-      return                    `rgba(239,68,68,${alpha})`;    // rot
+    getScoreColor(score) {
+      if (score == null) return '#6b7280';
+      if (score >= 80)   return '#34d399';  // grün
+      if (score >= 60)   return '#a78bfa';  // violet
+      if (score >= 40)   return '#fbbf24';  // gelb
+      return                    '#f87171';  // rot
     },
 
     // ── Score-Label ──────────────────────────────────────────────────────────
@@ -171,28 +256,26 @@ function faindable() {
     // ── Score-Insight ────────────────────────────────────────────────────────
     getScoreInsight(type, score) {
       if (score == null) return '';
-
       const copy = {
         seo: {
-          high:   'Deine Website ist gut für Google aufgestellt. Kleine Optimierungen holen noch mehr heraus.',
-          solid:  'Solide Basis — mit gezielten Maßnahmen erreichst du bessere Positionen.',
-          medium: 'Mehrere SEO-Faktoren haben noch Luft nach oben. Das lässt sich gezielt beheben.',
-          low:    'Viel Potenzial für Verbesserungen — hier schlummern echte Wachstumschancen.',
+          high:   'Deine Website ist gut für Google aufgestellt.',
+          solid:  'Solide Basis — gezielte Maßnahmen holen mehr heraus.',
+          medium: 'Mehrere SEO-Faktoren haben noch Luft nach oben.',
+          low:    'Viel Potenzial — hier schlummern echte Wachstumschancen.',
         },
         geo: {
-          high:   'KI-Suchmaschinen können deine Inhalte gut verstehen und einordnen.',
-          solid:  'Guter Start für KI-Sichtbarkeit — mit mehr Struktur noch besser.',
-          medium: 'KI-Systeme haben Schwierigkeiten, deine Website einzuordnen.',
-          low:    'Für KI-Suche noch kaum optimiert — jetzt ist der richtige Zeitpunkt.',
+          high:   'KI-Suchmaschinen können deine Inhalte gut einordnen.',
+          solid:  'Guter Start für KI-Sichtbarkeit — mit mehr Struktur besser.',
+          medium: 'KI-Systeme haben Schwierigkeiten, deine Seite einzuordnen.',
+          low:    'Für KI-Suche noch kaum optimiert — jetzt ist der Zeitpunkt.',
         },
         overall: {
-          high:   'Deine Website ist insgesamt sehr gut aufgestellt. Weiter so!',
-          solid:  'Gute Basis — mit Fokus auf die richtigen Hebel noch mehr Sichtbarkeit.',
+          high:   'Deine Website ist insgesamt sehr gut aufgestellt.',
+          solid:  'Gute Basis — mit den richtigen Hebeln noch mehr Sichtbarkeit.',
           medium: 'Noch nicht da, wo du sein könntest — aber das ist lösbar.',
           low:    'Viel ungenutztes Potenzial. Lass uns das gemeinsam angehen.',
         },
       };
-
       const tier = score >= 80 ? 'high' : score >= 60 ? 'solid' : score >= 40 ? 'medium' : 'low';
       return copy[type]?.[tier] ?? '';
     },
@@ -211,11 +294,10 @@ function faindable() {
 
     // ── Formular ─────────────────────────────────────────────────────────────
     async submitForm() {
-      if (!this.form.name || !this.form.email) return;
+      if (!this.form.name || !this.form.email || !this.form.website) return;
       this.formSubmitting = true;
 
       try {
-        // Eigenen Backend-Endpoint hier eintragen, sonst Mailto-Fallback
         try {
           const res = await fetch('/api/contact', {
             method: 'POST',
@@ -224,15 +306,13 @@ function faindable() {
           });
           if (!res.ok) throw new Error('no endpoint');
         } catch {
-          // Mailto-Fallback
-          const subject = encodeURIComponent('Erstgespräch-Anfrage via Faindable');
+          const subject = encodeURIComponent('Analysereport-Anfrage via Faindable');
           const body    = encodeURIComponent(
             `Name: ${this.form.name}\nE-Mail: ${this.form.email}\n` +
             `Website: ${this.form.website || '—'}\n\nNachricht:\n${this.form.message || '—'}`
           );
           window.location.href = `mailto:info@faindable.de?subject=${subject}&body=${body}`;
         }
-
         this.formSent = true;
       } catch (err) {
         console.error('[Form]', err);
@@ -243,76 +323,5 @@ function faindable() {
 
     // ── Util ─────────────────────────────────────────────────────────────────
     _sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
-  };
-}
-
-// ─── Loading Steps Komponente ─────────────────────────────────────────────────
-function loadingSteps() {
-  const STEPS = [
-    {
-      label:      'Website wird geladen',
-      activeText: 'HTML & Ressourcen werden abgerufen …',
-      doneText:   'Seite erfolgreich geladen',
-      icon:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-      delay: 0,
-      duration: 0,
-    },
-    {
-      label:      'SEO-Signale analysieren',
-      activeText: 'E-E-A-T, On-Page, Technical SEO …',
-      doneText:   'SEO-Score berechnet',
-      icon:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-      delay: 3000,
-      duration: 0,
-    },
-    {
-      label:      'GEO-Faktoren prüfen',
-      activeText: 'Schema.org, Structured Data, Entity …',
-      doneText:   'GEO-Score berechnet',
-      icon:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2s-4 4-4 7a4 4 0 0 0 8 0c0-3-4-7-4-7z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="9" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>',
-      delay: 6000,
-      duration: 0,
-    },
-    {
-      label:      'PageSpeed & Core Web Vitals',
-      activeText: 'LCP, CLS, INP via Google API …',
-      doneText:   'Performance-Daten geladen',
-      icon:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12L6 7l3 3 2-4 3 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      delay: 9000,
-      duration: 0,
-    },
-    {
-      label:      'Gesamtscore berechnen',
-      activeText: 'Gewichtung & Auswertung …',
-      doneText:   'Fertig!',
-      icon:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.8 3.6L14 6.3l-3 2.9.7 4.1L8 11.4l-3.7 1.9.7-4.1L2 6.3l4.2-.7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
-      delay: 13000,
-      duration: 0,
-    },
-  ];
-
-  return {
-    steps: STEPS.map(s => ({ ...s, state: 'pending' })),
-    _timers: [],
-
-    init() {
-      // Schritte zeitgestaffelt aktivieren
-      STEPS.forEach((step, i) => {
-        const t = setTimeout(() => {
-          // Vorherigen Schritt abschließen
-          if (i > 0 && this.steps[i - 1].state === 'active') {
-            const prev = this.steps[i - 1];
-            prev.duration = Math.round(step.delay - STEPS[i - 1].delay - 200 + Math.random() * 400);
-            prev.state = 'done';
-          }
-          if (this.steps[i]) this.steps[i].state = 'active';
-        }, step.delay);
-        this._timers.push(t);
-      });
-    },
-
-    destroy() {
-      this._timers.forEach(t => clearTimeout(t));
-    },
   };
 }

@@ -6,34 +6,120 @@
   <title>faindable — SEO & GEO Score für deine Website</title>
   <meta name="description" content="Erfahre in Sekunden, wie gut deine Website von Google und KI-Suchmaschinen gefunden wird. Kostenloser SEO & GEO Score — ohne Anmeldung." />
 
-  <!-- Fonts -->
+  <!-- Fonts: Epilogue (Display) + Inter (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind (CDN mit Config für Dev) -->
+  <!-- Material Symbols -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            navy: { DEFAULT: '#FFFFFF', surface: '#F5F5F5', border: '#E5E5E5' },
-            brand: { primary: '#0F0F0F', accent: '#0F0F0F' },
-            score: { success: '#10B981', warning: '#F59E0B', danger: '#EF4444', solid: '#0F0F0F' },
-            content: { DEFAULT: '#0F172A', muted: '#64748B', subtle: '#475569' },
+            bg:                       '#06080F',
+            surface:                  '#06080F',
+            'surface-low':            '#0e1424',
+            'surface-mid':            '#131b2e',
+            'surface-high':           '#1a2239',
+            'surface-top':            '#222a3d',
+            'surface-var':            '#2d3449',
+            primary:                  '#d0bcff',
+            'primary-container':      '#4f378b',
+            'on-primary':             '#381e72',
+            secondary:                '#adc6ff',
+            'secondary-container':    '#0044c8',
+            tertiary:                 '#fbabff',
+            'on-surface':             '#dae2fd',
+            'on-surface-var':         '#cbc3d7',
+            outline:                  '#958ea0',
+            'outline-var':            '#494454',
+            error:                    '#ffb4ab',
           },
           fontFamily: {
-            display: ['"Syne"', 'sans-serif'],
-            body: ['"DM Sans"', 'sans-serif'],
+            display: ['"Epilogue"', 'sans-serif'],
+            body:    ['"Inter"',    'sans-serif'],
           },
           keyframes: {
-            fadeUp: { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-            shimmer: { '0%': { backgroundPosition: '-200% center' }, '100%': { backgroundPosition: '200% center' } },
+            'float-slow': {
+              '0%':   { transform: 'translate(0, 0)           scale(1)'    },
+              '20%':  { transform: 'translate(180px, -120px)  scale(1.18)' },
+              '40%':  { transform: 'translate(240px,  80px)   scale(0.88)' },
+              '60%':  { transform: 'translate(60px,   160px)  scale(1.12)' },
+              '80%':  { transform: 'translate(-120px, 80px)   scale(0.94)' },
+              '100%': { transform: 'translate(0, 0)           scale(1)'    },
+            },
+            'float-slow-2': {
+              '0%':   { transform: 'translate(0, 0)           scale(1)'    },
+              '25%':  { transform: 'translate(-160px, 100px)  scale(1.14)' },
+              '50%':  { transform: 'translate(-80px, -140px)  scale(0.90)' },
+              '75%':  { transform: 'translate(140px, -80px)   scale(1.10)' },
+              '100%': { transform: 'translate(0, 0)           scale(1)'    },
+            },
+            'float-slow-3': {
+              '0%':   { transform: 'translate(0, 0)           scale(1)'    },
+              '33%':  { transform: 'translate(-140px, -100px) scale(1.20)' },
+              '66%':  { transform: 'translate(160px,  60px)   scale(0.85)' },
+              '100%': { transform: 'translate(0, 0)           scale(1)'    },
+            },
+            'auroraOpacity': {
+              '0%':   { opacity: '0.72' },
+              '18%':  { opacity: '0.04' },
+              '38%':  { opacity: '0.70' },
+              '55%':  { opacity: '0.06' },
+              '75%':  { opacity: '0.68' },
+              '90%':  { opacity: '0.03' },
+              '100%': { opacity: '0.72' },
+            },
+            'auroraOpacity2': {
+              '0%':   { opacity: '0.65' },
+              '22%':  { opacity: '0.05' },
+              '42%':  { opacity: '0.68' },
+              '60%':  { opacity: '0.04' },
+              '80%':  { opacity: '0.62' },
+              '100%': { opacity: '0.65' },
+            },
+            'auroraOpacity3': {
+              '0%':   { opacity: '0.50' },
+              '25%':  { opacity: '0.03' },
+              '48%':  { opacity: '0.52' },
+              '72%':  { opacity: '0.04' },
+              '100%': { opacity: '0.50' },
+            },
+            scanAnim: {
+              '0%':   { top: '-4px', opacity: '0.9' },
+              '50%':  { opacity: '0.6' },
+              '100%': { top: '100%', opacity: '0' },
+            },
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(28px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            progressBar: {
+              '0%':   { width: '0%' },
+              '100%': { width: '100%' },
+            },
+            shimmerPulse: {
+              '0%, 100%': { opacity: '0.5' },
+              '50%':       { opacity: '1' },
+            },
+            spinSlow: {
+              '0%':   { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' },
+            },
           },
           animation: {
-            'fade-up': 'fadeUp 0.7s ease forwards',
-            shimmer: 'shimmer 2.5s linear infinite',
+            'float-slow':   'float-slow 20s ease-in-out infinite',
+            'float-slow-2': 'float-slow-2 26s ease-in-out infinite',
+            'float-slow-3': 'float-slow-3 16s ease-in-out infinite',
+            'scan':         'scanAnim 2s linear infinite',
+            'fade-up':      'fadeUp 0.6s ease forwards',
+            'shimmer-pulse':'shimmerPulse 1.8s ease-in-out infinite',
+            'spin-slow':    'spinSlow 2s linear infinite',
           },
         }
       }
@@ -44,1113 +130,973 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
   <style>
-    body { background-color: #FFFFFF; color: #0F172A; font-family: 'DM Sans', sans-serif; }
+    /* ── Base ──────────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
 
-    /* Hero background */
-    .hero-bg {
-      background: #060606;
-      overflow: hidden;
+    body {
+      background-color: #06080F;
+      color: #dae2fd;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Grid overlay */
-    .hero-bg::after {
+    /* ── Material Symbols ─────────────────────────────────────────────────── */
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+    .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .icon-lg   { font-size: 28px; }
+    .icon-xl   { font-size: 40px; }
+
+    /* ── Aurora Blobs ─────────────────────────────────────────────────────── */
+    .aurora-blob-1 {
+      position: absolute;
+      width: 800px; height: 800px;
+      top: 5%; left: -5%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 45% 45%, #9333ea 0%, #7c3aed 30%, #4c1d95 55%, transparent 72%);
+      filter: blur(80px);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: float-slow 20s ease-in-out infinite,
+                 auroraOpacity 12s ease-in-out infinite;
+    }
+
+    .aurora-blob-2 {
+      position: absolute;
+      width: 700px; height: 700px;
+      top: 8%; right: -5%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 55% 40%, #2563eb 0%, #1d4ed8 35%, #1e3a8a 58%, transparent 72%);
+      filter: blur(90px);
+      opacity: 0.70;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: float-slow-2 26s ease-in-out infinite,
+                 auroraOpacity2 15s ease-in-out infinite;
+    }
+
+    .aurora-blob-3 {
+      position: absolute;
+      width: 560px; height: 560px;
+      top: 35%; left: 25%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #db2777 0%, #a855f7 40%, transparent 70%);
+      filter: blur(100px);
+      opacity: 0.50;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: float-slow-3 16s ease-in-out infinite,
+                 auroraOpacity3 10s ease-in-out infinite;
+    }
+
+    /* ── Dot Grid ─────────────────────────────────────────────────────────── */
+    .dot-grid::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size: 56px 56px;
+      background-image: radial-gradient(circle, rgba(208,188,255,0.10) 0.8px, transparent 0.8px);
+      background-size: 28px 28px;
       pointer-events: none;
-      mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 30%, transparent 85%);
-      -webkit-mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 30%, transparent 85%);
+      z-index: 0;
     }
 
-    /* Moving spotlight – primary */
-    .hero-spotlight {
+    /* ── Glass Card ───────────────────────────────────────────────────────── */
+    .glass-card {
+      background: rgba(45, 52, 73, 0.40);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(149, 142, 160, 0.15);
+      border-radius: 16px;
+    }
+
+    .glass-card-hover {
+      transition: border-color 0.25s, background 0.25s, transform 0.25s;
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(208, 188, 255, 0.30);
+      background: rgba(79, 55, 139, 0.20);
+      transform: translateY(-3px);
+    }
+
+    /* ── Scan Line ────────────────────────────────────────────────────────── */
+    .scan-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .scan-line {
       position: absolute;
-      width: 900px; height: 900px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 40%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #d0bcff 30%, #adc6ff 70%, transparent 100%);
+      box-shadow: 0 0 20px rgba(208,188,255,0.8), 0 0 40px rgba(173,198,255,0.4);
+      animation: scanAnim 2s linear infinite;
+      z-index: 10;
       pointer-events: none;
-      animation: spotlightDrift 14s ease-in-out infinite;
-    }
-    /* Secondary accent glow */
-    .hero-spotlight-2 {
-      position: absolute;
-      width: 500px; height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 65%);
-      top: 20%; right: 5%;
-      pointer-events: none;
-      animation: spotlightDrift2 18s ease-in-out infinite;
-    }
-    @keyframes spotlightDrift {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      30%       { transform: translate(-42%, -60%) scale(1.10); }
-      65%       { transform: translate(-58%, -42%) scale(0.93); }
-    }
-    @keyframes spotlightDrift2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      40%       { transform: translate(-60px, 40px) scale(1.12); }
-      75%       { transform: translate(30px, -50px) scale(0.90); }
     }
 
-    /* Pulsing rings around form */
-    .form-ring {
-      position: absolute;
-      inset: -20px;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 22px;
-      pointer-events: none;
-      animation: formRingPulse 2.8s ease-out infinite;
+    /* ── Scroll Reveal ────────────────────────────────────────────────────── */
+    [data-fade] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
-    .form-ring-2 { inset: -38px; border-radius: 28px; animation-delay: 0.9s; }
-    .form-ring-3 { inset: -56px; border-radius: 34px; animation-delay: 1.8s; }
-    @keyframes formRingPulse {
-      0%   { opacity: 0.5; }
-      100% { opacity: 0; transform: scale(1.03); }
+    [data-fade="left"]  { transform: translateX(-32px); }
+    [data-fade="right"] { transform: translateX(32px); }
+
+    [data-fade].revealed {
+      opacity: 1;
+      transform: translate(0, 0);
     }
 
-    /* Text gradient (hero on dark) */
-    .text-gradient-hero {
-      background: linear-gradient(135deg, #FFFFFF 0%, rgba(255,255,255,0.55) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    [data-delay="100"] { transition-delay: 0.10s; }
+    [data-delay="200"] { transition-delay: 0.20s; }
+    [data-delay="300"] { transition-delay: 0.30s; }
+    [data-delay="400"] { transition-delay: 0.40s; }
+    [data-delay="500"] { transition-delay: 0.50s; }
+    [data-delay="600"] { transition-delay: 0.60s; }
+
+    /* ── Progress Bar ─────────────────────────────────────────────────────── */
+    .progress-track {
+      background: rgba(149,142,160,0.20);
+      border-radius: 100px;
+      overflow: hidden;
+      height: 4px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8B5CF6, #adc6ff);
+      border-radius: 100px;
+      transition: width 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
     }
 
-    /* Section tints */
-    .section-tint-violet { background-color: #F7F7F7; }
-    .section-tint-amber  { background-color: #F7F7F7; }
+    /* ── Score Ring ───────────────────────────────────────────────────────── */
+    .score-ring-track { stroke: rgba(149,142,160,0.20); }
+    .score-ring-fill  { transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1); }
 
-    /* CTA dark section */
-    .cta-dark {
-      background: linear-gradient(135deg, #000000 0%, #0F0F0F 50%, #0A0A0A 100%);
+    /* ── Input ────────────────────────────────────────────────────────────── */
+    .url-input {
+      background: rgba(19, 27, 46, 0.80);
+      border: 1.5px solid rgba(149,142,160,0.25);
+      color: #dae2fd;
+      border-radius: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Inter', sans-serif;
     }
-
-    /* Score circle animation */
-    .score-ring {
-      transition: stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .score-number {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-    }
-
-    /* Pulse ring */
-    @keyframes pulseRing {
-      0% { transform: scale(1); opacity: 0.6; }
-      100% { transform: scale(1.25); opacity: 0; }
-    }
-    .pulse-ring {
-      animation: pulseRing 2.2s ease-out infinite;
+    .url-input::placeholder { color: rgba(203,195,215,0.45); }
+    .url-input:focus {
+      outline: none;
+      border-color: rgba(208,188,255,0.60);
+      box-shadow: 0 0 0 3px rgba(208,188,255,0.10);
     }
 
-    /* Glow text */
-    .text-glow {
-      text-shadow: 0 0 30px rgba(15,15,15,0.5);
-    }
-    .text-gradient {
-      background: linear-gradient(135deg, #0F0F0F 0%, #555555 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    /* ── Bento Grid Glow ──────────────────────────────────────────────────── */
+    .bento-glow {
+      box-shadow: inset 0 1px 0 rgba(208,188,255,0.12);
     }
 
-    /* Loading shimmer */
-    .shimmer-text {
-      background: linear-gradient(90deg, #0F0F0F 0%, #555555 50%, #0F0F0F 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 2s linear infinite;
-    }
+    /* ── Hint Badge ───────────────────────────────────────────────────────── */
+    .hint-success { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .hint-warning { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+    .hint-error   { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
 
-    /* Spinner */
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { animation: spin 0.8s linear infinite; }
-
-    /* Card base shadow on white */
-    .card { box-shadow: 0 1px 4px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04); }
-
-    /* Card hover */
-    .card-hover {
-      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-      box-shadow: 0 1px 4px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(15,15,15,0.14), 0 2px 8px rgba(15,23,42,0.06);
-      border-color: rgba(15,15,15,0.35);
-    }
-
-    /* Score label badge */
-    .score-badge {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: 999px;
-    }
-
-    /* Step connector line */
-    .step-line {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      right: -50%;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(15,15,15,0.4), rgba(15,15,15,0.1));
-    }
-
-    /* Smooth reveal */
+    /* ── Alpine x-cloak ───────────────────────────────────────────────────── */
     [x-cloak] { display: none !important; }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-up { animation: fadeUp 0.7s ease forwards; }
-    .delay-100 { animation-delay: 0.1s; opacity: 0; }
-    .delay-200 { animation-delay: 0.2s; opacity: 0; }
-    .delay-300 { animation-delay: 0.3s; opacity: 0; }
-    .delay-400 { animation-delay: 0.4s; opacity: 0; }
+    /* ── Scrollbar ────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar       { width: 6px; }
+    ::-webkit-scrollbar-track { background: #06080F; }
+    ::-webkit-scrollbar-thumb { background: #2d3449; border-radius: 3px; }
   </style>
 </head>
 
-<body
-  x-data="faindable()"
-  x-init="init()"
-  class="min-h-screen overflow-x-hidden"
->
+<body class="font-body" x-data="faindable()" x-cloak>
 
-  <!-- ═══════════════════════════════════════════════════════ NAVBAR ══ -->
-  <nav class="sticky top-0 z-50 border-b border-navy-border bg-white/90 backdrop-blur-md shadow-sm">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <!-- Logo -->
-      <a href="#" class="flex items-center group">
-        <span class="font-display font-bold text-lg text-content group-hover:text-brand-primary transition-colors duration-200">
-          faindable
-        </span>
-      </a>
+<!-- ═══════════════════════════════════════════════════════ NAVBAR ════════ -->
+<nav class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 h-16"
+     style="background: rgba(6,8,15,0.72); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(149,142,160,0.10);">
 
-      <!-- CTA -->
-      <button
-        @click="openModal()"
-        class="hidden sm:flex items-center gap-2 bg-brand-primary hover:bg-[#1A1A1A] text-white text-sm font-display font-bold px-4 py-2 rounded-xl transition-all duration-200 hover:shadow-[0_0_20px_rgba(15,15,15,0.35)]"
-      >
-        Erstgespräch buchen
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-  </nav>
+  <a href="#" @click.prevent="resetAnalysis(); window.scrollTo({top:0, behavior:'smooth'})"
+     class="font-display font-bold text-xl tracking-tight text-on-surface">
+    faindable
+  </a>
 
-  <!-- ═══════════════════════════════════════════════════════ HERO ══ -->
-  <section class="hero-bg relative overflow-hidden pt-20 pb-16 md:pt-28 md:pb-24">
-    <!-- Animated spotlights -->
-    <div class="hero-spotlight"></div>
-    <div class="hero-spotlight-2"></div>
+  <button @click="openModal()"
+          class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+          style="background: #d0bcff; color: #381e72;">
+    Detailliertes Ergebnis
+  </button>
 
-    <div class="max-w-6xl mx-auto px-6 relative z-10">
+  <!-- Mobile CTA -->
+  <button @click="document.getElementById('hero-input')?.focus()"
+          class="md:hidden flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold"
+          style="background: #d0bcff; color: #381e72;">
+    <span class="material-symbols-outlined" style="font-size:14px">search</span>
+    Analysieren
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ HERO ══════════ -->
+<section id="hero"
+         class="relative min-h-screen flex items-center pt-16 overflow-hidden dot-grid"
+         style="background: #06080F;">
+
+  <!-- Overlay -->
+  <div class="absolute inset-0 z-[1]" style="background: rgba(6,8,15,0.25);"></div>
+
+  <div class="relative z-10 w-full max-w-5xl mx-auto px-6 py-20" style="min-height: 520px;">
+
+    <!-- ── STATE 1: INITIAL ─────────────────────────────────────────────── -->
+    <div x-show="heroState === 'initial'"
+         x-transition:enter="transition ease-out duration-400"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="flex flex-col items-center text-center">
+
       <!-- Badge -->
-      <div class="flex justify-center mb-7">
-        <span class="inline-flex items-center gap-2 border border-white/15 bg-white/8 text-white/70 text-xs font-body font-medium px-4 py-1.5 rounded-full backdrop-blur-sm">
-          <span class="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse"></span>
-          SEO · GEO · Sichtbarkeit
-        </span>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8 text-xs font-medium tracking-wide"
+           style="background: rgba(0,0,0,0.60); border: 1px solid rgba(149,142,160,0.20); color: #cbc3d7;">
+        <span class="material-symbols-outlined" style="font-size:13px; color: #d0bcff;">auto_awesome</span>
+        SEO · GEO · Sichtbarkeit
       </div>
 
       <!-- Headline -->
-      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center text-white leading-tight mb-5 animate-fade-up">
-        Wie gut ist deine<br class="hidden sm:block" />
-        <span class="text-gradient-hero">Website wirklich?</span>
+      <h1 class="font-display font-black leading-[1.05] mb-6"
+          style="font-size: clamp(2.4rem, 6vw, 4.2rem); color: #dae2fd; letter-spacing: -0.02em;">
+        Wie sichtbar ist<br />
+        <span style="background: linear-gradient(135deg, #d0bcff 0%, #adc6ff 50%, #fbabff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          deine Website?
+        </span>
       </h1>
 
-      <!-- Subline -->
-      <p class="text-white/55 text-lg text-center max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-100">
-        Gib deine URL ein — und erfahre in Sekunden, wie gut deine Website von
-        Google und KI-Suchmaschinen gefunden wird.
+      <p class="text-base md:text-lg mb-10 max-w-lg" style="color: #cbc3d7; line-height: 1.7; font-weight: 400;">
+        Erfahre in Sekunden, wie gut Google <em>und</em> KI-Suchmaschinen
+        dich finden. Kostenlos, ohne Anmeldung.
       </p>
 
-      <!-- URL Input Form -->
-      <div class="max-w-2xl mx-auto animate-fade-up delay-200">
-        <form @submit.prevent="analyze()" class="relative">
-          <!-- Pulse rings -->
-          <div class="form-ring"></div>
-          <div class="form-ring form-ring-2"></div>
-          <div class="form-ring form-ring-3"></div>
-
-          <div class="flex flex-col sm:flex-row gap-3 relative">
-            <div class="relative flex-1">
-              <!-- Input icon -->
-              <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M15 9A6 6 0 1 1 3 9a6 6 0 0 1 12 0z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M9 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <input
-                x-model="url"
-                type="url"
-                placeholder="https://deine-website.de"
-                class="w-full pl-11 pr-4 py-4 bg-white border border-white/20 rounded-xl text-gray-900 placeholder-gray-400 text-base focus:outline-none focus:border-white focus:shadow-[0_0_0_3px_rgba(255,255,255,0.20)] transition-all duration-200"
-                :class="{ 'border-score-danger': urlError }"
-                :disabled="loading"
-                autocomplete="url"
-                inputmode="url"
-              />
-            </div>
-
-            <!-- Submit button -->
-            <button
-              type="submit"
-              :disabled="loading"
-              class="flex items-center justify-center gap-2 bg-white hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed text-black font-display font-bold px-7 py-4 rounded-xl transition-all duration-200 hover:shadow-[0_0_32px_rgba(255,255,255,0.25)] whitespace-nowrap"
-            >
-              <!-- Loading state -->
-              <template x-if="loading">
-                <span class="flex items-center gap-2">
-                  <svg class="spinner w-4 h-4" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="rgba(0,0,0,0.2)" stroke-width="3"/>
-                    <path d="M12 2a10 10 0 0 1 10 10" stroke="black" stroke-width="3" stroke-linecap="round"/>
-                  </svg>
-                  Analyse läuft...
-                </span>
-              </template>
-              <!-- Default state -->
-              <template x-if="!loading">
-                <span class="flex items-center gap-2">
-                  Jetzt analysieren
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </template>
-            </button>
+      <!-- URL Input -->
+      <div class="w-full max-w-xl">
+        <div class="flex gap-3 items-stretch">
+          <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                  style="color: rgba(203,195,215,0.50);">language</span>
+            <input id="hero-input"
+                   type="url"
+                   x-model="url"
+                   @keydown.enter="analyze()"
+                   placeholder="https://deine-website.de"
+                   class="url-input w-full pl-11 pr-4 py-3.5 text-sm"
+                   autocomplete="off" />
           </div>
+          <button @click="analyze()"
+                  class="px-5 py-3.5 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
+                  style="background: #d0bcff; color: #381e72; min-width: 130px;">
+            Analysieren
+          </button>
+        </div>
 
-          <!-- Error message -->
-          <div
-            x-show="urlError"
-            x-transition
-            class="mt-3 flex items-center gap-2 text-score-danger text-sm"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M7 4v3.5M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <span x-text="urlError"></span>
-          </div>
-        </form>
+        <!-- Error -->
+        <p x-show="urlError" x-text="urlError"
+           class="mt-2 text-xs text-left pl-1" style="color: #ffb4ab;"></p>
 
-        <!-- Trust hints -->
-        <div class="flex items-center justify-center gap-6 mt-5 text-white/45 text-xs">
-          <span class="flex items-center gap-1.5">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 6l3 3 5-5" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Kein Account nötig
-          </span>
-          <span class="flex items-center gap-1.5">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 6l3 3 5-5" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            100% kostenlos
-          </span>
-          <span class="flex items-center gap-1.5">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 6l3 3 5-5" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Ergebnis in &lt; 30 Sek.
-          </span>
+      </div>
+
+      <!-- Trust Pills -->
+      <div class="flex flex-wrap justify-center gap-3 mt-10">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium glass-card"
+             style="color: #cbc3d7;">
+          <span class="material-symbols-outlined" style="font-size:14px; color:#d0bcff;">bolt</span>
+          In ~30 Sek. fertig
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium glass-card"
+             style="color: #cbc3d7;">
+          <span class="material-symbols-outlined" style="font-size:14px; color:#adc6ff;">shield</span>
+          100 % kostenlos
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ══════════════════════════════════════════════════ LOADING ══ -->
-  <section
-    x-show="loading"
-    x-cloak
-    x-transition:enter="transition ease-out duration-400"
-    x-transition:enter-start="opacity-0 translate-y-6"
-    x-transition:enter-end="opacity-100 translate-y-0"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0"
-    id="loading-section"
-    class="py-14 md:py-20 relative border-t border-navy-border"
-  >
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="max-w-lg mx-auto">
+    <!-- ── STATE 2: SCANNING ────────────────────────────────────────────── -->
+    <div x-show="heroState === 'scanning'"
+         x-cloak
+         x-transition:enter="transition ease-out duration-400"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="flex flex-col items-center text-center max-w-md mx-auto w-full">
 
-        <!-- Analysierte URL -->
-        <div class="flex items-center gap-2 mb-8 text-sm text-content-muted">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="shrink-0">
-            <circle cx="7" cy="7" r="5.5" stroke="#0F0F0F" stroke-width="1.4"/>
-            <path d="M4 7h6M7 4v6" stroke="#0F0F0F" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-          <span class="truncate" x-text="url || 'Deine Website'"></span>
+      <!-- Radar Animation -->
+      <div class="mb-6">
+        <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sArmGrad" x1="80" y1="80" x2="80" y2="6" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stop-color="#d0bcff" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#d0bcff" stop-opacity="0.05"/>
+            </linearGradient>
+            <style>
+              /* 3s rotation */
+              .s-sweep { animation: sSpin 3s linear infinite; transform-origin: 80px 80px; }
+              @keyframes sSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+              .s-ring-pulse { animation: sRingP 3s ease-in-out infinite; }
+              @keyframes sRingP { 0%,100%{opacity:.18} 50%{opacity:.40} }
+
+              /*
+               * Blip: bright flash then fade. Period = 3s (matches sweep).
+               * Delay = -(3 * (1 - angle/360))
+               * Angles (cx,cy from center 80,80 — clockwise from top):
+               *  p1 (80,14)  θ=0°   delay=-3.00s
+               *  p2 (122,42) θ=55°  delay=-2.54s
+               *  p3 (134,80) θ=90°  delay=-2.25s
+               *  p4 (120,124)θ=140° delay=-1.83s
+               *  p5 (80,144) θ=180° delay=-1.50s
+               *  p6 (38,120) θ=222° delay=-1.15s
+               *  p7 (26,80)  θ=270° delay=-0.75s
+               *  p8 (44,38)  θ=315° delay=-0.38s
+               *  p9 (108,58) θ=44°  delay=-2.63s  (mid ring)
+               *  p10(112,110)θ=130° delay=-1.92s
+               *  p11(50,112) θ=224° delay=-1.13s
+               *  p12(52,52)  θ=318° delay=-0.35s
+               */
+              @keyframes sBlip {
+                0%   { opacity: 1;    }
+                35%  { opacity: 0.50; }
+                70%  { opacity: 0.15; }
+                100% { opacity: 0.10; }
+              }
+              .sp { animation: sBlip 3s linear infinite; }
+              .sp1  { animation-delay: -3.00s; } .sp2  { animation-delay: -2.54s; }
+              .sp3  { animation-delay: -2.25s; } .sp4  { animation-delay: -1.83s; }
+              .sp5  { animation-delay: -1.50s; } .sp6  { animation-delay: -1.15s; }
+              .sp7  { animation-delay: -0.75s; } .sp8  { animation-delay: -0.38s; }
+              .sp9  { animation-delay: -2.63s; } .sp10 { animation-delay: -1.92s; }
+              .sp11 { animation-delay: -1.13s; } .sp12 { animation-delay: -0.35s; }
+            </style>
+          </defs>
+          <!-- Rings -->
+          <circle cx="80" cy="80" r="66" stroke="rgba(208,188,255,0.10)" stroke-width="1" fill="none"/>
+          <circle cx="80" cy="80" r="48" stroke="rgba(208,188,255,0.16)" stroke-width="1" fill="none" class="s-ring-pulse"/>
+          <circle cx="80" cy="80" r="30" stroke="rgba(208,188,255,0.22)" stroke-width="1" fill="none"/>
+          <circle cx="80" cy="80" r="14" stroke="rgba(208,188,255,0.30)" stroke-width="1" fill="none" class="s-ring-pulse" style="animation-delay:-.5s"/>
+          <!-- Cross hairs -->
+          <line x1="80" y1="6"  x2="80" y2="154" stroke="rgba(208,188,255,0.05)" stroke-width="1"/>
+          <line x1="6"  y1="80" x2="154" y2="80"  stroke="rgba(208,188,255,0.05)" stroke-width="1"/>
+          <!-- Outer ring points -->
+          <circle class="sp sp1"  cx="80"  cy="14"  r="3"   fill="#d0bcff"/>
+          <circle class="sp sp2"  cx="122" cy="42"  r="2.5" fill="#adc6ff"/>
+          <circle class="sp sp3"  cx="134" cy="80"  r="3"   fill="#d0bcff"/>
+          <circle class="sp sp4"  cx="120" cy="124" r="2.5" fill="#fbabff"/>
+          <circle class="sp sp5"  cx="80"  cy="142" r="3"   fill="#adc6ff"/>
+          <circle class="sp sp6"  cx="38"  cy="120" r="2.5" fill="#d0bcff"/>
+          <circle class="sp sp7"  cx="26"  cy="80"  r="3"   fill="#fbabff"/>
+          <circle class="sp sp8"  cx="44"  cy="38"  r="2.5" fill="#adc6ff"/>
+          <!-- Mid ring points -->
+          <circle class="sp sp9"  cx="108" cy="58"  r="2"   fill="#d0bcff"/>
+          <circle class="sp sp10" cx="112" cy="110" r="2"   fill="#adc6ff"/>
+          <circle class="sp sp11" cx="50"  cy="112" r="2"   fill="#fbabff"/>
+          <circle class="sp sp12" cx="52"  cy="52"  r="2"   fill="#d0bcff"/>
+          <!-- Sweep -->
+          <g class="s-sweep">
+            <path d="M80 80 L80 8 A72 72 0 0 0 35 24 Z" fill="rgba(208,188,255,0.06)"/>
+            <line x1="80" y1="80" x2="80" y2="8" stroke="url(#sArmGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="80" cy="10" r="2.5" fill="#d0bcff" opacity="0.8"/>
+          </g>
+          <!-- Center -->
+          <circle cx="80" cy="80" r="3" fill="#d0bcff" opacity="0.9"/>
+          <circle cx="80" cy="80" r="7" fill="#d0bcff" opacity="0.12"/>
+        </svg>
+      </div>
+
+      <!-- URL -->
+      <p class="text-xs mb-5 truncate w-full px-4 py-2 rounded-lg"
+         style="color: rgba(203,195,215,0.55); background: rgba(13,19,38,0.70); font-family: monospace;">
+        <span x-text="url"></span>
+      </p>
+
+      <!-- Progress Bar -->
+      <div class="progress-track w-full mb-2">
+        <div class="progress-fill" :style="`width: ${scanProgress}%`"></div>
+      </div>
+      <div class="flex justify-between text-xs w-full mb-6" style="color: rgba(203,195,215,0.40);">
+        <span>Analyse läuft</span>
+        <span x-text="`${scanProgress}%`"></span>
+      </div>
+
+      <!-- Steps — tauchen nacheinander auf -->
+      <div class="w-full space-y-2 text-left">
+        <template x-for="(step, i) in scanSteps" :key="i">
+          <div x-show="i <= currentScanStep"
+               x-transition:enter="transition ease-out duration-500"
+               x-transition:enter-start="opacity-0 translate-y-2"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               class="flex items-center gap-2.5 px-3 py-2 rounded-lg"
+               :style="i < currentScanStep
+                 ? 'background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.15);'
+                 : 'background: rgba(208,188,255,0.06); border: 1px solid rgba(208,188,255,0.18);'">
+            <span class="material-symbols-outlined flex-shrink-0"
+                  style="font-size:14px;"
+                  :style="i < currentScanStep ? 'color:#34d399;' : 'color:#d0bcff;'"
+                  x-text="i < currentScanStep ? 'check_circle' : 'radio_button_checked'"></span>
+            <span class="text-xs font-medium"
+                  :style="i < currentScanStep ? 'color:rgba(203,195,215,0.50);' : 'color:#dae2fd;'"
+                  x-text="step.label"></span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- ── STATE 3: RESULT ──────────────────────────────────────────────── -->
+    <div x-show="heroState === 'result'"
+         x-cloak
+         x-transition:enter="transition ease-out duration-400"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="w-full max-w-4xl mx-auto">
+
+      <!-- Analyzed URL -->
+      <div class="flex items-center justify-center gap-2 mb-8">
+        <span class="material-symbols-outlined" style="font-size:15px; color: #34d399;">check_circle</span>
+        <span class="text-xs font-mono truncate max-w-xs" style="color: rgba(203,195,215,0.60);" x-text="analyzedUrl"></span>
+        <button @click="resetAnalysis()" class="ml-2 flex items-center gap-1 text-xs hover:text-primary transition-colors" style="color: rgba(203,195,215,0.50);">
+          <span class="material-symbols-outlined" style="font-size:13px;">refresh</span>
+          Neu analysieren
+        </button>
+      </div>
+
+      <!-- Score Cards — 2 Spalten -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+        <!-- SEO Score -->
+        <div class="glass-card p-6 flex flex-col items-center text-center"
+             style="border-color: rgba(208,188,255,0.20);">
+          <p class="text-xs font-semibold tracking-widest uppercase mb-4" style="color: #d0bcff;">SEO-Score</p>
+          <div class="relative mb-3">
+            <svg width="100" height="100" viewBox="0 0 110 110">
+              <circle class="score-ring-track" cx="55" cy="55" r="42" fill="none" stroke-width="6"
+                      stroke-linecap="round" transform="rotate(-90 55 55)" />
+              <circle class="score-ring-fill" cx="55" cy="55" r="42" fill="none" stroke-width="6"
+                      stroke-linecap="round" transform="rotate(-90 55 55)"
+                      stroke-dasharray="263.9"
+                      :stroke-dashoffset="scoreToOffset(results.seo)"
+                      :stroke="getScoreColor(results.seo)" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="font-display font-black text-2xl leading-none" :style="`color: ${getScoreColor(results.seo)}`" x-text="results.seo"></span>
+              <span class="text-xs mt-0.5" style="color: rgba(203,195,215,0.50);">/100</span>
+            </div>
+          </div>
+          <p class="text-sm font-semibold mb-1" style="color: #dae2fd;" x-text="getScoreLabel(results.seo)"></p>
+          <p class="text-xs leading-relaxed mb-3" style="color: rgba(203,195,215,0.60);" x-text="getScoreInsight('seo', results.seo)"></p>
+          <div class="flex flex-col gap-1.5 w-full">
+            <template x-for="hint in getSeoHints(results.seo)" :key="hint.text">
+              <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs" :class="`hint-${hint.type}`">
+                <span class="material-symbols-outlined" style="font-size:12px;"
+                      x-text="hint.type === 'success' ? 'check' : hint.type === 'warning' ? 'warning' : 'error'"></span>
+                <span x-text="hint.text"></span>
+              </div>
+            </template>
+          </div>
         </div>
 
-        <!-- Schritte -->
-        <div class="space-y-3" x-data="loadingSteps()">
-          <template x-for="(step, i) in steps" :key="i">
-            <div
-              class="flex items-center gap-4 bg-navy-surface border rounded-xl px-5 py-3.5 transition-all duration-300"
-              :class="{
-                'border-brand-primary/40 shadow-[0_0_16px_rgba(15,15,15,0.08)]': step.state === 'active',
-                'border-score-success/30': step.state === 'done',
-                'border-navy-border opacity-40': step.state === 'pending',
-              }"
-            >
-              <!-- Icon / Spinner / Checkmark -->
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-300"
-                :class="{
-                  'bg-brand-primary/15': step.state === 'active',
-                  'bg-score-success/12': step.state === 'done',
-                  'bg-navy-border/50':   step.state === 'pending',
-                }"
-              >
-                <!-- Pending: Icon -->
-                <span x-show="step.state === 'pending'" x-html="step.icon" class="text-content-muted opacity-60"></span>
-
-                <!-- Active: Spinner -->
-                <svg x-show="step.state === 'active'" class="spinner w-4 h-4 text-brand-primary" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="rgba(15,15,15,0.25)" stroke-width="2.5"/>
-                  <path d="M12 3a9 9 0 0 1 9 9" stroke="#0F0F0F" stroke-width="2.5" stroke-linecap="round"/>
-                </svg>
-
-                <!-- Done: Checkmark -->
-                <svg x-show="step.state === 'done'" class="w-4 h-4" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8l3.5 3.5 6.5-7" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+        <!-- GEO Score -->
+        <div class="glass-card p-6 flex flex-col items-center text-center"
+             style="border-color: rgba(173,198,255,0.20);">
+          <p class="text-xs font-semibold tracking-widest uppercase mb-4" style="color: #adc6ff;">GEO-Score</p>
+          <div class="relative mb-3">
+            <svg width="100" height="100" viewBox="0 0 110 110">
+              <circle class="score-ring-track" cx="55" cy="55" r="42" fill="none" stroke-width="6"
+                      stroke-linecap="round" transform="rotate(-90 55 55)" />
+              <circle class="score-ring-fill" cx="55" cy="55" r="42" fill="none" stroke-width="6"
+                      stroke-linecap="round" transform="rotate(-90 55 55)"
+                      stroke-dasharray="263.9"
+                      :stroke-dashoffset="scoreToOffset(results.geo)"
+                      :stroke="getScoreColor(results.geo)" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="font-display font-black text-2xl leading-none" :style="`color: ${getScoreColor(results.geo)}`" x-text="results.geo"></span>
+              <span class="text-xs mt-0.5" style="color: rgba(203,195,215,0.50);">/100</span>
+            </div>
+          </div>
+          <p class="text-sm font-semibold mb-1" style="color: #dae2fd;" x-text="getScoreLabel(results.geo)"></p>
+          <p class="text-xs leading-relaxed mb-3" style="color: rgba(203,195,215,0.60);" x-text="getScoreInsight('geo', results.geo)"></p>
+          <div class="flex flex-col gap-1.5 w-full">
+            <template x-for="hint in getGeoHints(results.geo)" :key="hint.text">
+              <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs" :class="`hint-${hint.type}`">
+                <span class="material-symbols-outlined" style="font-size:12px;"
+                      x-text="hint.type === 'success' ? 'check' : hint.type === 'warning' ? 'warning' : 'error'"></span>
+                <span x-text="hint.text"></span>
               </div>
+            </template>
+          </div>
+        </div>
+      </div>
 
-              <!-- Text -->
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-body font-medium transition-colors duration-200"
-                  :class="{
-                    'text-content': step.state !== 'pending',
-                    'text-content-muted': step.state === 'pending',
-                  }"
-                  x-text="step.label"
-                ></p>
-                <p class="text-xs text-content-muted mt-0.5 transition-opacity duration-200"
-                  :class="{ 'opacity-0': step.state === 'pending' }"
-                  x-text="step.state === 'done' ? step.doneText : (step.state === 'active' ? step.activeText : '')"
-                ></p>
-              </div>
+      <!-- Gesamtbewertung — Summary statt Score-Ring -->
+      <div class="glass-card p-6 mb-4 flex flex-col md:flex-row items-start md:items-center gap-5"
+           style="border-color: rgba(208,188,255,0.30); box-shadow: 0 0 32px rgba(139,92,246,0.12);">
+        <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center"
+             :style="`background: ${getScoreColor(results.overall)}22; border: 1px solid ${getScoreColor(results.overall)}44;`">
+          <span class="material-symbols-outlined" style="font-size:22px;"
+                :style="`color: ${getScoreColor(results.overall)};`">
+            <span x-text="results.overall >= 80 ? 'verified' : results.overall >= 60 ? 'trending_up' : results.overall >= 40 ? 'warning' : 'priority_high'"></span>
+          </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-semibold uppercase tracking-widest" style="color: rgba(203,195,215,0.50);">Gesamtbewertung</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full"
+                  :style="`background: ${getScoreColor(results.overall)}18; color: ${getScoreColor(results.overall)};`"
+                  x-text="getScoreLabel(results.overall)"></span>
+          </div>
+          <p class="text-sm leading-relaxed" style="color: #dae2fd;" x-text="getScoreInsight('overall', results.overall)"></p>
+          <p class="text-xs mt-1" style="color: rgba(203,195,215,0.45);"
+             x-text="`+ ${results.manual_checks} manuelle Checks empfohlen (Backlinks, Google Business u. a.)`"></p>
+        </div>
+        <button @click="openModal()"
+                class="flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:opacity-90 whitespace-nowrap"
+                style="background: #d0bcff; color: #381e72;">
+          Jetzt verbessern
+        </button>
+      </div>
+    </div>
 
-              <!-- Dauer-Badge -->
-              <span
-                x-show="step.state === 'done' && step.duration"
-                class="text-xs text-score-success/70 font-mono shrink-0"
-                x-text="step.duration ? step.duration + 'ms' : ''"
-              ></span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ METHODIK ══════════ -->
+<section id="methodik" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Heading -->
+    <div class="text-center mb-16" data-fade>
+      <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: #d0bcff;">Was wir messen</p>
+      <h2 class="font-display font-black text-3xl md:text-4xl mb-4 leading-tight" style="color: #dae2fd; letter-spacing: -0.02em;">
+        Zwei Scores. Ein vollständiges Bild.
+      </h2>
+      <p class="text-base max-w-xl mx-auto" style="color: rgba(203,195,215,0.65); line-height: 1.7;">
+        Klassisches SEO trifft auf Generative Engine Optimization (GEO) —
+        damit du überall gefunden wirst.
+      </p>
+    </div>
+
+    <!-- 2 col cards -->
+    <div class="grid md:grid-cols-2 gap-5">
+
+      <!-- SEO Card -->
+      <div class="glass-card glass-card-hover bento-glow p-8" data-fade data-delay="100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+               style="background: rgba(208,188,255,0.12); border: 1px solid rgba(208,188,255,0.25);">
+            <span class="material-symbols-outlined" style="color: #d0bcff;">search</span>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg" style="color: #dae2fd;">SEO-Score</h3>
+            <p class="text-xs" style="color: rgba(203,195,215,0.50);">Google & klassische Suchmaschinen</p>
+          </div>
+        </div>
+        <p class="text-sm mb-5 leading-relaxed" style="color: rgba(203,195,215,0.65);">
+          Wir prüfen alle relevanten On-Page- und technischen Faktoren:
+          von E-E-A-T über Meta-Daten bis zu Core Web Vitals.
+        </p>
+        <div class="space-y-2.5">
+          <template x-for="item in [
+            {icon:'verified', label:'E-E-A-T & Autorität'},
+            {icon:'code',     label:'Title, Meta & Headings'},
+            {icon:'speed',    label:'Core Web Vitals (LCP, CLS, INP)'},
+            {icon:'map',      label:'robots.txt & sitemap.xml'},
+          ]">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined" style="font-size:15px; color: rgba(208,188,255,0.60);" x-text="item.icon"></span>
+              <span class="text-sm" style="color: rgba(203,195,215,0.70);" x-text="item.label"></span>
             </div>
           </template>
         </div>
-
-        <!-- Fortschrittsbalken -->
-        <div class="mt-6 h-1 bg-navy-border rounded-full overflow-hidden">
-          <div
-            class="h-full bg-gradient-to-r from-brand-primary to-brand-accent rounded-full transition-all duration-700 ease-out"
-            :style="{ width: loadingProgress + '%' }"
-            x-data="{ loadingProgress: 0 }"
-            x-init="
-              loadingProgress = 5;
-              $watch('$store', () => {});
-              // Fortschritt simulieren
-              const iv = setInterval(() => {
-                if (loadingProgress < 85) loadingProgress += Math.random() * 8;
-                else clearInterval(iv);
-              }, 900);
-              $el.__stopProgress = () => { clearInterval(iv); loadingProgress = 100; };
-            "
-          ></div>
-        </div>
-        <p class="text-center text-content-muted text-xs mt-3">
-          Analyse läuft — das dauert meist 10–20 Sekunden
-        </p>
-
       </div>
+
+      <!-- GEO Card -->
+      <div class="glass-card glass-card-hover bento-glow p-8" data-fade data-delay="200">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+               style="background: rgba(173,198,255,0.12); border: 1px solid rgba(173,198,255,0.25);">
+            <span class="material-symbols-outlined" style="color: #adc6ff;">smart_toy</span>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg" style="color: #dae2fd;">GEO-Score</h3>
+            <p class="text-xs" style="color: rgba(203,195,215,0.50);">ChatGPT, Perplexity & KI-Suche</p>
+          </div>
+        </div>
+        <p class="text-sm mb-5 leading-relaxed" style="color: rgba(203,195,215,0.65);">
+          Generative AI liest deine Website anders als Google.
+          Wir messen, wie gut KI-Systeme deine Marke einordnen und zitieren können.
+        </p>
+        <div class="space-y-2.5">
+          <template x-for="item in [
+            {icon:'data_object',   label:'Schema.org & Structured Data'},
+            {icon:'category',      label:'Entity & Zitierfähigkeit'},
+            {icon:'quiz',          label:'FAQPage & semantische Struktur'},
+            {icon:'link',          label:'Social Signals & sameAs-Links'},
+          ]">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined" style="font-size:15px; color: rgba(173,198,255,0.60);" x-text="item.icon"></span>
+              <span class="text-sm" style="color: rgba(203,195,215,0.70);" x-text="item.label"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ═══════════════════════════════════════════════════ RESULTS ══ -->
-  <section
-    x-show="showResults"
-    x-cloak
-    x-transition:enter="transition ease-out duration-500"
-    x-transition:enter-start="opacity-0 translate-y-8"
-    x-transition:enter-end="opacity-100 translate-y-0"
-    id="results"
-    class="py-16 md:py-20 relative"
-  >
+<!-- ═══════════════════════════════════════════════ WARUM FAINDABLE ═══════ -->
+<section id="so-gehts" class="relative py-24 px-6 dot-grid" style="background: #06080F;">
+  <div class="max-w-7xl mx-auto">
 
-    <div class="max-w-6xl mx-auto px-6">
+    <!-- Header -->
+    <div class="text-center mb-16" data-fade>
+      <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: #d0bcff;">Warum faindable</p>
+      <h2 class="font-display font-black text-3xl md:text-4xl leading-tight" style="color: #dae2fd; letter-spacing: -0.02em;">
+        Maximale Performance für deine Sichtbarkeit.
+      </h2>
+    </div>
 
-      <!-- Analyzed URL badge -->
-      <div class="flex justify-center mb-10">
-        <div class="inline-flex items-center gap-2 bg-navy-surface border border-navy-border px-4 py-2 rounded-full text-sm">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <circle cx="7" cy="7" r="5.5" stroke="#10B981" stroke-width="1.5"/>
-            <path d="M4.5 7l2 2 3-3" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span class="text-content-muted">Analysiert:</span>
-          <span class="text-content font-medium truncate max-w-xs" x-text="analyzedUrl || url"></span>
+    <!-- Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+      <!-- ── GROSSE KARTE (col-span-8) ── -->
+      <div class="md:col-span-8 rounded-xl p-8 min-h-[400px] flex flex-col justify-between relative overflow-hidden group"
+           style="background: #1a2239;"
+           data-fade data-delay="0">
+
+        <!-- Hover Gradient Overlay -->
+        <div class="absolute top-0 right-0 w-1/2 h-full opacity-20 transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+             style="background: linear-gradient(to left, rgba(208,188,255,0.30), transparent);"></div>
+
+        <!-- Bar Chart Visual — vertically centered, shifted left from edge -->
+        <div class="absolute top-0 bottom-0 flex items-center pointer-events-none" style="right: 80px;" aria-hidden="true">
+          <div style="width: 190px;">
+            <style>
+              @keyframes barGrow {
+                from { transform: scaleY(0); opacity: 0; }
+                to   { transform: scaleY(1); opacity: 1; }
+              }
+              @keyframes barShimmer {
+                0%, 100% { opacity: 0.80; }
+                50%       { opacity: 1.00; }
+              }
+              /* Each bar: grow then shimmer with unique period/delay */
+              .bc1 { transform-origin:bottom; animation: barGrow 1.0s cubic-bezier(0.22,1,0.36,1) 0.10s both, barShimmer 2.6s ease-in-out 1.2s infinite; }
+              .bc2 { transform-origin:bottom; animation: barGrow 1.0s cubic-bezier(0.22,1,0.36,1) 0.25s both, barShimmer 2.2s ease-in-out 1.4s infinite; }
+              .bc3 { transform-origin:bottom; animation: barGrow 1.0s cubic-bezier(0.22,1,0.36,1) 0.40s both, barShimmer 3.0s ease-in-out 1.6s infinite; }
+              .bc4 { transform-origin:bottom; animation: barGrow 1.0s cubic-bezier(0.22,1,0.36,1) 0.55s both, barShimmer 2.4s ease-in-out 1.8s infinite; }
+              .bc5 { transform-origin:bottom; animation: barGrow 1.0s cubic-bezier(0.22,1,0.36,1) 0.70s both, barShimmer 2.8s ease-in-out 2.0s infinite; }
+            </style>
+
+            <!-- Bars -->
+            <div style="display:flex; align-items:flex-end; gap:10px; height:130px; margin-bottom:8px;">
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%;">
+                <div class="bc1" style="width:100%; height:72%; border-radius:4px 4px 2px 2px;
+                     background:linear-gradient(to top, rgba(208,188,255,0.75), rgba(208,188,255,0.20));
+                     box-shadow: 0 0 10px rgba(208,188,255,0.20);"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%;">
+                <div class="bc2" style="width:100%; height:88%; border-radius:4px 4px 2px 2px;
+                     background:linear-gradient(to top, #d0bcff, rgba(208,188,255,0.35));
+                     box-shadow: 0 0 16px rgba(208,188,255,0.40);"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%;">
+                <div class="bc3" style="width:100%; height:93%; border-radius:4px 4px 2px 2px;
+                     background:linear-gradient(to top, rgba(173,198,255,0.80), rgba(173,198,255,0.22));
+                     box-shadow: 0 0 10px rgba(173,198,255,0.20);"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%;">
+                <div class="bc4" style="width:100%; height:56%; border-radius:4px 4px 2px 2px;
+                     background:linear-gradient(to top, rgba(251,171,255,0.75), rgba(251,171,255,0.20));
+                     box-shadow: 0 0 10px rgba(251,171,255,0.18);"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%;">
+                <div class="bc5" style="width:100%; height:66%; border-radius:4px 4px 2px 2px;
+                     background:linear-gradient(to top, rgba(208,188,255,0.65), rgba(208,188,255,0.15));
+                     box-shadow: 0 0 8px rgba(208,188,255,0.15);"></div>
+              </div>
+            </div>
+
+            <!-- Baseline -->
+            <div style="height:1px; background:rgba(149,142,160,0.18); margin-bottom:6px;"></div>
+
+            <!-- Labels -->
+            <div style="display:flex; gap:10px; text-align:center;">
+              <div style="flex:1; font-size:9px; color:rgba(203,195,215,0.45); line-height:1.3;">E-E-A-T</div>
+              <div style="flex:1; font-size:9px; color:rgba(208,188,255,0.75); line-height:1.3;">On-Page</div>
+              <div style="flex:1; font-size:9px; color:rgba(173,198,255,0.60); line-height:1.3;">Tech</div>
+              <div style="flex:1; font-size:9px; color:rgba(251,171,255,0.55); line-height:1.3;">Schema</div>
+              <div style="flex:1; font-size:9px; color:rgba(203,195,215,0.45); line-height:1.3;">Entity</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-sm">
+          <span class="material-symbols-outlined mb-6 block" style="font-size: 40px; color: #d0bcff;">query_stats</span>
+          <h3 class="font-display font-bold text-3xl mb-4" style="color: #ffffff;">Deep Analysis</h3>
+          <p class="text-sm leading-relaxed" style="color: #cbc3d7;">
+            Faindable prüft über 30 SEO- und GEO-Faktoren gleichzeitig — von E-E-A-T
+            und Core Web Vitals bis zu Schema.org und KI-Semantik. Statt oberflächlicher
+            Checklisten liefert unsere Engine echte Ursachen: Was blockiert dein Ranking?
+            Warum übersehen KI-Suchmaschinen deine Seite? Du bekommst Antworten, keine Zahlen.
+          </p>
+        </div>
+
+        <!-- Badge unten -->
+        <div class="relative z-10 flex items-center gap-2.5 mt-8">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background: #d0bcff;"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2" style="background: #d0bcff;"></span>
+          </span>
+          <span class="font-bold uppercase tracking-widest" style="font-size: 10px; color: #d0bcff;">30+ Faktoren geprüft</span>
         </div>
       </div>
 
-      <!-- Score Circles -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-
-        <!-- SEO Score -->
-        <div
-          class="relative flex flex-col items-center bg-navy-surface border border-navy-border rounded-2xl p-8 card-hover"
-          x-data="{ animated: false }"
-          x-init="$watch('$store.results.seo', () => { $nextTick(() => animated = true) })"
-        >
-          <!-- Pulse ring -->
-          <div class="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500" :class="{ 'opacity-100': showResults }">
-            <div class="absolute inset-[-1px] rounded-2xl border"
-              :style="{ borderColor: getScoreColor(results.seo, 0.4) }"></div>
-          </div>
-
-          <div class="relative w-36 h-36 mb-5">
-            <!-- Pulse glow -->
-            <div class="absolute inset-0 rounded-full pulse-ring"
-              :style="{ backgroundColor: getScoreColor(results.seo, 0.08) }"></div>
-
-            <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              <!-- Track -->
-              <circle cx="50" cy="50" r="42" fill="none" stroke="#E2E8F0" stroke-width="7"/>
-              <!-- Progress -->
-              <circle
-                cx="50" cy="50" r="42"
-                fill="none"
-                :stroke="getScoreColor(results.seo, 1)"
-                stroke-width="7"
-                stroke-linecap="round"
-                :stroke-dasharray="263.9"
-                :stroke-dashoffset="scoreToOffset(results.seo)"
-                class="score-ring"
-                style="stroke-dashoffset: 263.9"
-                :style="{ strokeDashoffset: scoreToOffset(results.seo) }"
-              />
-            </svg>
-            <!-- Center number -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                class="score-number text-4xl leading-none"
-                :style="{ color: getScoreColor(results.seo, 1) }"
-                x-text="results.seo ?? '—'"
-              ></span>
-              <span class="text-content-muted text-xs mt-1 font-body">/ 100</span>
-            </div>
-          </div>
-
-          <h3 class="font-display font-bold text-base text-content mb-2">SEO Score</h3>
-          <span
-            class="score-badge"
-            :style="{ backgroundColor: getScoreColor(results.seo, 0.12), color: getScoreColor(results.seo, 1) }"
-            x-text="getScoreLabel(results.seo)"
-          ></span>
-          <p class="text-content-muted text-sm text-center mt-3 leading-relaxed" x-text="getScoreInsight('seo', results.seo)"></p>
-        </div>
-
-        <!-- GEO Score (center, slightly elevated) -->
-        <div class="relative flex flex-col items-center bg-navy-surface border border-navy-border rounded-2xl p-8 card-hover sm:-mt-2 sm:shadow-[0_8px_40px_rgba(15,15,15,0.12)]">
-          <!-- "Gesamt" badge on top -->
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-            <span class="bg-brand-primary text-white text-xs font-display font-bold px-3 py-1 rounded-full shadow-[0_0_16px_rgba(15,15,15,0.4)]">
-              KI-Sichtbarkeit
-            </span>
-          </div>
-
-          <div class="relative w-36 h-36 mb-5 mt-3">
-            <div class="absolute inset-0 rounded-full pulse-ring"
-              :style="{ backgroundColor: getScoreColor(results.geo, 0.08) }"></div>
-
-            <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="#E2E8F0" stroke-width="7"/>
-              <circle
-                cx="50" cy="50" r="42"
-                fill="none"
-                :stroke="getScoreColor(results.geo, 1)"
-                stroke-width="7"
-                stroke-linecap="round"
-                :stroke-dasharray="263.9"
-                style="stroke-dashoffset: 263.9"
-                :style="{ strokeDashoffset: scoreToOffset(results.geo) }"
-                class="score-ring"
-              />
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                class="score-number text-4xl leading-none"
-                :style="{ color: getScoreColor(results.geo, 1) }"
-                x-text="results.geo ?? '—'"
-              ></span>
-              <span class="text-content-muted text-xs mt-1 font-body">/ 100</span>
-            </div>
-          </div>
-
-          <h3 class="font-display font-bold text-base text-content mb-2">GEO Score</h3>
-          <span
-            class="score-badge"
-            :style="{ backgroundColor: getScoreColor(results.geo, 0.12), color: getScoreColor(results.geo, 1) }"
-            x-text="getScoreLabel(results.geo)"
-          ></span>
-          <p class="text-content-muted text-sm text-center mt-3 leading-relaxed" x-text="getScoreInsight('geo', results.geo)"></p>
-        </div>
-
-        <!-- Overall Score -->
-        <div class="relative flex flex-col items-center bg-navy-surface border border-navy-border rounded-2xl p-8 card-hover">
-          <div class="relative w-36 h-36 mb-5">
-            <div class="absolute inset-0 rounded-full pulse-ring"
-              :style="{ backgroundColor: getScoreColor(results.overall, 0.08) }"></div>
-
-            <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="#E2E8F0" stroke-width="7"/>
-              <!-- Outer glow ring -->
-              <circle
-                cx="50" cy="50" r="42"
-                fill="none"
-                :stroke="getScoreColor(results.overall, 0.2)"
-                stroke-width="14"
-                stroke-linecap="round"
-                :stroke-dasharray="263.9"
-                style="stroke-dashoffset: 263.9"
-                :style="{ strokeDashoffset: scoreToOffset(results.overall) }"
-                class="score-ring"
-              />
-              <circle
-                cx="50" cy="50" r="42"
-                fill="none"
-                :stroke="getScoreColor(results.overall, 1)"
-                stroke-width="7"
-                stroke-linecap="round"
-                :stroke-dasharray="263.9"
-                style="stroke-dashoffset: 263.9"
-                :style="{ strokeDashoffset: scoreToOffset(results.overall) }"
-                class="score-ring"
-              />
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                class="score-number text-4xl leading-none"
-                :style="{ color: getScoreColor(results.overall, 1) }"
-                x-text="results.overall ?? '—'"
-              ></span>
-              <span class="text-content-muted text-xs mt-1 font-body">/ 100</span>
-            </div>
-          </div>
-
-          <h3 class="font-display font-bold text-base text-content mb-2">Gesamtscore</h3>
-          <span
-            class="score-badge"
-            :style="{ backgroundColor: getScoreColor(results.overall, 0.12), color: getScoreColor(results.overall, 1) }"
-            x-text="getScoreLabel(results.overall)"
-          ></span>
-          <p class="text-content-muted text-sm text-center mt-3 leading-relaxed" x-text="getScoreInsight('overall', results.overall)"></p>
-        </div>
-      </div>
-
-      <!-- Manual checks banner -->
-      <div
-        x-show="results.manual_checks > 0"
-        class="flex items-start gap-3 bg-brand-primary/8 border border-brand-primary/20 rounded-xl p-4 mb-8 text-sm"
-      >
-        <svg class="w-5 h-5 text-brand-primary shrink-0 mt-0.5" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M10 6.5v4M10 13.5h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <p class="text-content-subtle leading-relaxed">
-          <span class="text-brand-primary font-medium" x-text="results.manual_checks"></span>
-          Faktoren konnten nicht automatisch geprüft werden — darunter Backlinks,
-          NAP-Konsistenz und Google Business-Präsenz. Diese fließen in eine vollständige Bewertung ein.
+      <!-- ── KLEINE KARTE: URL eingeben (col-span-4) ── -->
+      <div class="md:col-span-4 glass-card rounded-xl p-8 flex flex-col group transition-colors duration-200 hover:border-[rgba(208,188,255,0.30)]"
+           data-fade data-delay="100">
+        <span class="material-symbols-outlined mb-6 block" style="font-size: 32px; color: #adc6ff;">bolt</span>
+        <h3 class="font-display font-bold text-xl mb-3" style="color: #ffffff;">Blitzschnell &amp; aktuell</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: #cbc3d7;">
+          Die Analyse dauert unter 30 Sekunden — kein Warten, kein Plugin.
+          Faindable basiert auf den neuesten Google-Algorithmen und GEO-Standards
+          für 2026, damit dein Score immer auf aktuellem Stand ist.
         </p>
+        <div class="mt-auto">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-px block" style="background: rgba(149,142,160,0.20);"></span>
+          </div>
+          <span class="font-bold uppercase tracking-widest" style="font-size: 10px; color: #958ea0;">Immer aktuell · Immer schnell</span>
+        </div>
       </div>
 
-      <!-- CTA Block -->
-      <div class="relative overflow-hidden bg-[#F5F5F5] border border-black/10 rounded-2xl p-8 md:p-10">
-        <!-- Decorative corner glow -->
-        <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-black/5 blur-2xl pointer-events-none"></div>
+      <!-- ── KLEINE KARTE: Score erhalten (col-span-4) ── -->
+      <div class="md:col-span-4 glass-card rounded-xl p-8 flex flex-col group transition-colors duration-200 hover:border-[rgba(208,188,255,0.30)]"
+           data-fade data-delay="200">
+        <span class="material-symbols-outlined mb-6 block" style="font-size: 32px; color: #fbabff;">celebration</span>
+        <h3 class="font-display font-bold text-xl mb-3" style="color: #ffffff;">100% Kostenlos</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: #cbc3d7;">
+          Score abrufen, Ergebnis verstehen, handeln — ohne Kreditkarte,
+          ohne Account. Und wenn du tiefer einsteigen möchtest: Auch das
+          erste Analysereport ist kostenlos und unverbindlich.
+        </p>
+        <div class="mt-auto">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-px block" style="background: rgba(149,142,160,0.20);"></span>
+          </div>
+          <span class="font-bold uppercase tracking-widest" style="font-size: 10px; color: #958ea0;">Score + Analysereport — kostenlos</span>
+        </div>
+      </div>
 
-        <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="max-w-lg">
-            <h2 class="font-display font-bold text-xl md:text-2xl text-content mb-2">
-              Willst du wissen, was hinter deinem Score steckt?
-            </h2>
-            <p class="text-content-muted leading-relaxed">
-              Im kostenlosen Erstgespräch analysieren wir deine Website im Detail
-              und zeigen dir konkrete Maßnahmen — ohne Verpflichtung.
+      <!-- ── TRUST-KARTE (col-span-8) ── -->
+      <div class="md:col-span-8 rounded-xl p-8 relative overflow-hidden"
+           style="background: linear-gradient(135deg, #1a2239 0%, #2d3449 100%);"
+           data-fade data-delay="300">
+
+        <!-- Deko Blob -->
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full pointer-events-none"
+             style="background: rgba(208,188,255,0.10); filter: blur(48px);"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+
+          <!-- Heading über den 3 Spalten -->
+          <div class="md:col-span-3 mb-2">
+            <p class="text-xs font-semibold uppercase tracking-widest" style="color: rgba(203,195,215,0.40);">Das solltest du wissen</p>
+          </div>
+
+          <!-- Fakt 1 -->
+          <div>
+            <span class="material-symbols-outlined mb-4 block" style="font-size: 28px; color: #d0bcff;">privacy_tip</span>
+            <h4 class="font-bold mb-2" style="color: #ffffff;">Keine Datenspeicherung</h4>
+            <p class="text-xs leading-relaxed" style="color: #cbc3d7;">
+              Wir speichern keine URLs oder Analyseergebnisse. Deine Daten bleiben privat — kein Account nötig.
             </p>
           </div>
 
-          <div class="flex flex-col items-start md:items-end gap-2 shrink-0">
-            <button
-              @click="openModal()"
-              class="flex items-center gap-2 bg-brand-primary hover:bg-[#1A1A1A] text-white font-display font-bold px-7 py-3.5 rounded-xl transition-all duration-200 hover:shadow-[0_0_28px_rgba(15,15,15,0.4)] whitespace-nowrap"
-            >
-              Kostenloses Erstgespräch buchen
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <span class="text-content-muted text-xs">Keine Verpflichtung · 30 Minuten · 100% kostenlos</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ WAS MESSEN WIR ══ -->
-  <section class="py-16 md:py-20 border-t border-navy-border section-tint-violet" id="was-messen-wir">
-    <div class="max-w-6xl mx-auto px-6">
-
-      <div class="text-center mb-12">
-        <span class="text-brand-primary text-xs font-medium uppercase tracking-widest mb-3 block">Methodik</span>
-        <h2 class="font-display font-bold text-3xl md:text-4xl text-content mb-4">Was messen wir?</h2>
-        <p class="text-content-muted max-w-xl mx-auto">
-          faindable prüft deine Website auf Dutzende Signale — in zwei Dimensionen,
-          die heute über Sichtbarkeit entscheiden.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-
-        <!-- SEO Card -->
-        <div class="bg-navy-surface border border-navy-border rounded-2xl p-7 card-hover">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-brand-primary/15 flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="9" cy="9" r="7" stroke="#0F0F0F" stroke-width="1.6"/>
-                <path d="M14 14L18 18" stroke="#0F0F0F" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M6 9h6M9 6v6" stroke="#0F0F0F" stroke-width="1.4" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-display font-bold text-lg text-content">SEO Score</h3>
-              <span class="text-brand-primary text-xs">Google-Sichtbarkeit</span>
-            </div>
-          </div>
-
-          <p class="text-content-muted text-sm leading-relaxed mb-5">
-            Der SEO Score bewertet, wie gut deine Website für klassische Suchmaschinen
-            optimiert ist. Er umfasst technische Grundlagen, Inhaltsqualität und
-            Vertrauenssignale, die Google zur Bewertung heranzieht.
-          </p>
-
-          <ul class="space-y-2.5">
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-primary shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              E-E-A-T: Autorität, Vertrauen & Expertise
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-primary shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              On-Page: Titel, Meta, Überschriften-Hierarchie
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-primary shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Technik: Ladezeit, Core Web Vitals, Indexierbarkeit
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-primary shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Lokales SEO & Nutzersignale
-            </li>
-          </ul>
-        </div>
-
-        <!-- GEO Card -->
-        <div class="bg-navy-surface border border-navy-border rounded-2xl p-7 card-hover">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-brand-accent/15 flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 2C10 2 5 7 5 11a5 5 0 0 0 10 0c0-4-5-9-5-9z" stroke="#0F0F0F" stroke-width="1.6"/>
-                <circle cx="10" cy="11" r="2" stroke="#0F0F0F" stroke-width="1.5"/>
-                <path d="M3 17h14" stroke="#0F0F0F" stroke-width="1.4" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-display font-bold text-lg text-content">GEO Score</h3>
-              <span class="text-brand-accent text-xs">KI-Sichtbarkeit</span>
-            </div>
-          </div>
-
-          <p class="text-content-muted text-sm leading-relaxed mb-5">
-            GEO steht für Generative Engine Optimization — Sichtbarkeit in KI-Systemen
-            wie ChatGPT, Perplexity und Google SGE. Wer hier nicht optimiert ist, wird
-            in Zukunft kaum noch gefunden.
-          </p>
-
-          <ul class="space-y-2.5">
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Strukturierte Daten & Schema.org-Markup
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Semantische Inhaltsstruktur & FAQ-Muster
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Entity-Autorität & Zitierfähigkeit
-            </li>
-            <li class="flex items-start gap-2.5 text-sm text-content-subtle">
-              <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Technische Crawlbarkeit für KI-Bots
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Disclaimer -->
-      <div class="flex items-start gap-3 bg-navy-surface border border-navy-border rounded-xl p-4 text-sm text-content-muted">
-        <svg class="w-4 h-4 text-content-subtle shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
-          <path d="M8 5.5v3.5M8 11h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        Viele Faktoren prüfen wir automatisch in Sekunden. Für eine vollständige Bewertung — inklusive Backlink-Profil, Google Business und Wettbewerbs-Analyse — empfehlen wir das kostenlose Erstgespräch.
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════════ SO FUNKTIONIERT'S ══ -->
-  <section class="py-16 md:py-24 border-t border-navy-border bg-[#F7F7F7]">
-    <div class="max-w-6xl mx-auto px-6">
-
-      <div class="text-center mb-14">
-        <span class="text-brand-primary text-xs font-medium uppercase tracking-widest mb-3 block">Ablauf</span>
-        <h2 class="font-display font-bold text-3xl md:text-4xl text-content mb-3">So funktioniert's</h2>
-        <p class="text-content-muted max-w-sm mx-auto text-sm">Vom ersten Klick bis zum Ergebnis — in unter 30 Sekunden.</p>
-      </div>
-
-      <div class="relative grid grid-cols-1 md:grid-cols-3 gap-5">
-
-        <!-- Verbindungspfeile Desktop -->
-        <div class="hidden md:flex absolute top-1/2 left-1/3 -translate-y-1/2 -translate-x-1/2 z-10 items-center justify-center w-9 h-9 rounded-full bg-white border border-navy-border shadow-sm">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M3 7h8M8 4l3 3-3 3" stroke="#0F0F0F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="hidden md:flex absolute top-1/2 left-2/3 -translate-y-1/2 -translate-x-1/2 z-10 items-center justify-center w-9 h-9 rounded-full bg-white border border-navy-border shadow-sm">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M3 7h8M8 4l3 3-3 3" stroke="#0F0F0F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <!-- Step 1 -->
-        <div class="relative bg-[#0F0F0F] rounded-2xl p-7 overflow-hidden flex flex-col">
-          <span class="absolute -bottom-4 -right-2 font-display font-bold text-[96px] leading-none text-white/[0.06] select-none pointer-events-none">01</span>
-          <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-5 shrink-0">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="9" r="6" stroke="white" stroke-width="1.5"/>
-              <path d="M14.5 13.5L18 17" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M7.5 9h5M10 6.5v5" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-lg text-white mb-2">URL eingeben</h3>
-          <p class="text-white/55 text-sm leading-relaxed flex-1">Gib einfach die Adresse deiner Website ein. Keine Anmeldung, kein Plugin, kein Aufwand.</p>
-          <div class="mt-6 inline-flex items-center gap-2 bg-white/10 text-white/60 text-xs px-3 py-1.5 rounded-full self-start">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M5 3v2l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Unter 10 Sekunden
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="relative bg-[#0F0F0F] rounded-2xl p-7 overflow-hidden flex flex-col">
-          <span class="absolute -bottom-4 -right-2 font-display font-bold text-[96px] leading-none text-white/[0.06] select-none pointer-events-none">02</span>
-          <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-5 shrink-0">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <rect x="3" y="5" width="14" height="10" rx="2" stroke="white" stroke-width="1.5"/>
-              <path d="M7 9h6M7 12h4" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>
-              <circle cx="15" cy="5" r="3" fill="white"/>
-              <path d="M13.5 5l1 1 1.5-1.5" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-lg text-white mb-2">Analyse läuft</h3>
-          <p class="text-white/55 text-sm leading-relaxed flex-1">Wir prüfen deine Website auf über 30 SEO- und GEO-Faktoren — vollautomatisch und in Sekunden.</p>
-          <div class="mt-6 inline-flex items-center gap-2 bg-white/10 text-white/60 text-xs px-3 py-1.5 rounded-full self-start">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M6 3l2 2-2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            30+ Faktoren geprüft
-          </div>
-        </div>
-
-        <!-- Step 3 — weißer Akzent -->
-        <div class="relative bg-[#0F0F0F] rounded-2xl p-7 overflow-hidden flex flex-col ring-1 ring-white/20">
-          <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 blur-2xl rounded-full pointer-events-none"></div>
-          <span class="absolute -bottom-4 -right-2 font-display font-bold text-[96px] leading-none text-white/[0.06] select-none pointer-events-none">03</span>
-          <div class="w-11 h-11 rounded-xl bg-white/12 flex items-center justify-center mb-5 shrink-0">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2l2.2 4.6 5 .7-3.6 3.5.85 5L10 13.4l-4.45 2.4.85-5L3 7.3l5-.7z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-lg text-white mb-2">Score erhalten</h3>
-          <p class="text-white/55 text-sm leading-relaxed flex-1">Dein SEO- und GEO-Score erscheint sofort. Optional: kostenloses Erstgespräch für die Details.</p>
-          <div class="mt-6 inline-flex items-center gap-2 bg-white/10 text-white/70 text-xs px-3 py-1.5 rounded-full self-start">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Kostenlos & sofort
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════ WARUM FAINDABLE? ══ -->
-  <section class="py-16 md:py-20 border-t border-navy-border section-tint-violet">
-    <div class="max-w-6xl mx-auto px-6">
-
-      <div class="text-center mb-12">
-        <span class="text-brand-primary text-xs font-medium uppercase tracking-widest mb-3 block">Trust</span>
-        <h2 class="font-display font-bold text-3xl md:text-4xl text-content">Warum faindable?</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-        <!-- Card 1: Schnell -->
-        <div class="bg-navy-surface border border-navy-border rounded-2xl p-6 card-hover group">
-          <div class="w-11 h-11 rounded-xl bg-brand-primary/10 flex items-center justify-center mb-4 group-hover:bg-brand-primary/20 transition-colors duration-200">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <circle cx="11" cy="11" r="9" stroke="#0F0F0F" stroke-width="1.6"/>
-              <path d="M11 6v5l3.5 3.5" stroke="#0F0F0F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-base text-content mb-2">Blitzschnell</h3>
-          <p class="text-content-muted text-sm leading-relaxed">Analyse in unter 30 Sekunden — kein Warten, keine Ladebalken.</p>
-        </div>
-
-        <!-- Card 2: Aktuell -->
-        <div class="bg-navy-surface border border-navy-border rounded-2xl p-6 card-hover group">
-          <div class="w-11 h-11 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-4 group-hover:bg-brand-accent/20 transition-colors duration-200">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M11 3C6.58 3 3 6.58 3 11s3.58 8 8 8 8-3.58 8-8" stroke="#0F0F0F" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M15 3l4 4-4 4" stroke="#0F0F0F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M11 8v3l2 2" stroke="#0F0F0F" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-base text-content mb-2">Aktuell 2026</h3>
-          <p class="text-content-muted text-sm leading-relaxed">Basiert auf den neuesten Google-Algorithmen und GEO-Standards für KI-Suche.</p>
-        </div>
-
-        <!-- Card 3: Kostenlos -->
-        <div class="bg-navy-surface border border-navy-border rounded-2xl p-6 card-hover group">
-          <div class="w-11 h-11 rounded-xl bg-score-success/10 flex items-center justify-center mb-4 group-hover:bg-score-success/20 transition-colors duration-200">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M11 3L13.5 9H20L15 13L17 19L11 15L5 19L7 13L2 9H8.5L11 3Z" stroke="#10B981" stroke-width="1.6" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h3 class="font-display font-bold text-base text-content mb-2">100% kostenlos</h3>
-          <p class="text-content-muted text-sm leading-relaxed">Kein Account, keine Kreditkarte. Score abrufen — fertig.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════════════════════ CTA ══ -->
-  <section class="cta-dark py-16 md:py-24 relative overflow-hidden">
-    <!-- Dezente Highlights im Gradient -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-6xl mx-auto px-6 relative text-center">
-      <span class="inline-flex items-center gap-2 border border-white/20 bg-white/10 text-white/80 text-xs font-medium px-4 py-1.5 rounded-full mb-6">
-        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-        Kostenlos · Kein Account · 30 Minuten
-      </span>
-      <h2 class="font-display font-bold text-3xl md:text-5xl text-white mb-4 leading-tight">
-        Bereit für eine Website,<br class="hidden sm:block" />
-        die wirklich gefunden wird?
-      </h2>
-      <p class="text-white/70 text-lg max-w-xl mx-auto mb-8">
-        Im kostenlosen Erstgespräch zeigen wir dir deine größten Hebel —
-        konkret, umsetzbar, ohne Buzzwords.
-      </p>
-      <button
-        @click="openModal()"
-        class="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-[#0F0F0F] font-display font-bold px-8 py-4 rounded-xl text-lg transition-all duration-200 shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]"
-      >
-        Erstgespräch buchen →
-      </button>
-      <p class="text-white/50 text-sm mt-4">Keine Verpflichtung · 100% kostenlos</p>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════════════════ FOOTER ══ -->
-  <footer class="border-t border-navy-border py-8 bg-slate-50">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-content-muted text-sm">
-      <div class="flex items-center gap-2">
-        <span class="font-display font-bold text-content">faindable</span>
-      </div>
-      <span>© 2026 faindable. Alle Rechte vorbehalten.</span>
-      <div class="flex items-center gap-4">
-        <a href="#" class="hover:text-content transition-colors duration-200">Impressum</a>
-        <a href="#" class="hover:text-content transition-colors duration-200">Datenschutz</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ════════════════════════════════════════ CONTACT MODAL ══ -->
-  <div
-    x-show="modalOpen"
-    x-cloak
-    @keydown.escape.window="closeModal()"
-    class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-  >
-    <!-- Backdrop -->
-    <div
-      class="absolute inset-0 bg-[#0F172A]/70 backdrop-blur-sm"
-      @click="closeModal()"
-      x-transition:enter="transition ease-out duration-200"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-150"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-    ></div>
-
-    <!-- Modal panel -->
-    <div
-      class="relative bg-navy-surface border border-navy-border rounded-2xl p-7 md:p-9 w-full max-w-lg shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
-      x-transition:enter="transition ease-out duration-250"
-      x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-      x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-      x-transition:leave="transition ease-in duration-150"
-      x-transition:leave-start="opacity-100 scale-100"
-      x-transition:leave-end="opacity-0 scale-95"
-      @click.stop
-    >
-      <!-- Close button -->
-      <button
-        @click="closeModal()"
-        class="absolute top-4 right-4 w-8 h-8 rounded-lg bg-navy-border/50 hover:bg-navy-border flex items-center justify-center text-content-muted hover:text-content transition-colors duration-150"
-      >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-
-      <!-- Header -->
-      <div class="mb-6">
-        <h3 class="font-display font-bold text-xl text-content mb-1">Kostenloses Erstgespräch</h3>
-        <p class="text-content-muted text-sm">30 Minuten · Keine Verpflichtung · Dein konkreter Fahrplan</p>
-      </div>
-
-      <!-- Success state -->
-      <div x-show="formSent" class="text-center py-8">
-        <div class="w-16 h-16 rounded-full bg-score-success/15 border border-score-success/30 flex items-center justify-center mx-auto mb-4">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M5 14l7 7L23 7" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <h4 class="font-display font-bold text-lg text-content mb-2">Nachricht erhalten!</h4>
-        <p class="text-content-muted text-sm">Wir melden uns innerhalb von 24 Stunden bei dir. Bis dann!</p>
-        <button @click="closeModal()" class="mt-6 text-brand-primary text-sm hover:underline">Schließen</button>
-      </div>
-
-      <!-- Form -->
-      <form x-show="!formSent" @submit.prevent="submitForm()">
-        <div class="space-y-4">
-
+          <!-- Fakt 2 -->
           <div>
-            <label class="block text-sm text-content-subtle mb-1.5" for="modal-name">Name *</label>
-            <input
-              id="modal-name"
-              x-model="form.name"
-              type="text"
-              placeholder="Max Mustermann"
-              required
-              class="w-full px-4 py-3 bg-navy border border-navy-border rounded-xl text-content placeholder-content-muted text-sm focus:outline-none focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(15,15,15,0.12)] transition-all duration-200"
-            />
+            <span class="material-symbols-outlined mb-4 block" style="font-size: 28px; color: #adc6ff;">verified</span>
+            <h4 class="font-bold mb-2" style="color: #ffffff;">Echte Google-Daten</h4>
+            <p class="text-xs leading-relaxed" style="color: #cbc3d7;">
+              Core Web Vitals kommen direkt von der offiziellen Google PageSpeed Insights API — keine Schätzwerte.
+            </p>
           </div>
 
+          <!-- Fakt 3 -->
           <div>
-            <label class="block text-sm text-content-subtle mb-1.5" for="modal-email">E-Mail *</label>
-            <input
-              id="modal-email"
-              x-model="form.email"
-              type="email"
-              placeholder="max@beispiel.de"
-              required
-              class="w-full px-4 py-3 bg-navy border border-navy-border rounded-xl text-content placeholder-content-muted text-sm focus:outline-none focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(15,15,15,0.12)] transition-all duration-200"
-            />
+            <span class="material-symbols-outlined mb-4 block" style="font-size: 28px; color: #fbabff;">join_inner</span>
+            <h4 class="font-bold mb-2" style="color: #ffffff;">SEO & KI in einem</h4>
+            <p class="text-xs leading-relaxed" style="color: #cbc3d7;">
+              Das einzige Tool, das klassisches Google-SEO und KI-Sichtbarkeit (GEO) gemeinsam auswertet.
+            </p>
           </div>
 
-          <div>
-            <label class="block text-sm text-content-subtle mb-1.5" for="modal-url">Website-URL</label>
-            <input
-              id="modal-url"
-              x-model="form.website"
-              type="url"
-              placeholder="https://deine-website.de"
-              class="w-full px-4 py-3 bg-navy border border-navy-border rounded-xl text-content placeholder-content-muted text-sm focus:outline-none focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(15,15,15,0.12)] transition-all duration-200"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm text-content-subtle mb-1.5" for="modal-message">Was ist dein größtes Problem gerade? <span class="text-content-muted">(optional)</span></label>
-            <textarea
-              id="modal-message"
-              x-model="form.message"
-              rows="3"
-              placeholder="Ich werde kaum über Google gefunden, obwohl ich..."
-              class="w-full px-4 py-3 bg-navy border border-navy-border rounded-xl text-content placeholder-content-muted text-sm focus:outline-none focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(15,15,15,0.12)] transition-all duration-200 resize-none"
-            ></textarea>
-          </div>
         </div>
+      </div>
 
-        <button
-          type="submit"
-          :disabled="formSubmitting"
-          class="mt-5 w-full flex items-center justify-center gap-2 bg-brand-primary hover:bg-[#1A1A1A] disabled:opacity-70 text-white font-display font-bold py-3.5 rounded-xl transition-all duration-200 hover:shadow-[0_0_24px_rgba(15,15,15,0.35)]"
-        >
-          <template x-if="formSubmitting">
-            <span class="flex items-center gap-2">
-              <svg class="spinner w-4 h-4" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              </svg>
-              Senden...
-            </span>
-          </template>
-          <template x-if="!formSubmitting">
-            <span>Jetzt Termin anfragen →</span>
-          </template>
-        </button>
-      </form>
     </div>
   </div>
+</section>
 
-  <!-- JS (Reihenfolge wichtig) -->
-  <script src="js/config.js"></script>
-  <script src="js/analyzer.js"></script>
-  <script src="js/main.js"></script>
+<!-- ═══════════════════════════════════════════════════ CTA ═══════════════ -->
+<section id="cta" class="relative py-28 px-6">
+  <!-- subtle radial glow center -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+    <div style="width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(139,92,246,0.12) 0%, transparent 70%); filter: blur(40px);"></div>
+  </div>
+
+  <div class="relative max-w-2xl mx-auto text-center" data-fade>
+    <p class="text-xs font-semibold tracking-widest uppercase mb-4" style="color: #d0bcff;">Nächster Schritt</p>
+    <h2 class="font-display font-black text-3xl md:text-5xl mb-5 leading-tight" style="color: #dae2fd; letter-spacing: -0.02em;">
+      Score verbessern?<br />
+      <span style="background: linear-gradient(135deg, #d0bcff, #adc6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        Wir helfen dir.
+      </span>
+    </h2>
+    <p class="text-base mb-8 max-w-md mx-auto" style="color: rgba(203,195,215,0.65); line-height: 1.7;">
+      In einem kostenlosen Analysereport zeigen wir dir die drei größten Hebel
+      für mehr Sichtbarkeit — konkret, ohne Agentur-Blabla.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button @click="openModal()"
+              class="px-7 py-3.5 rounded-xl font-semibold text-base transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5"
+              style="background: #ffffff; color: #06080F; min-width: 220px;">
+        Detailliertes Ergebnis
+      </button>
+      <button @click="document.getElementById('hero-input')?.focus(); window.scrollTo({top:0,behavior:'smooth'})"
+              class="px-7 py-3.5 rounded-xl font-semibold text-base transition-all duration-200 hover:border-primary"
+              style="background: transparent; color: #dae2fd; border: 1.5px solid rgba(149,142,160,0.30);">
+        Score testen
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ FOOTER ════════════ -->
+<footer class="border-t px-6 py-10" style="border-color: rgba(149,142,160,0.12);">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+
+    <div class="flex items-center gap-3">
+      <span class="font-display font-bold text-lg" style="color: #dae2fd;">faindable</span>
+      <span class="text-xs" style="color: rgba(203,195,215,0.35);">— SEO &amp; GEO Analyse</span>
+    </div>
+
+    <div class="flex items-center gap-6 text-xs" style="color: rgba(203,195,215,0.45);">
+      <a href="#" class="hover:text-on-surface transition-colors">Impressum</a>
+      <a href="#" class="hover:text-on-surface transition-colors">Datenschutz</a>
+      <a href="mailto:info@faindable.de" class="hover:text-on-surface transition-colors">info@faindable.de</a>
+    </div>
+
+    <p class="text-xs" style="color: rgba(203,195,215,0.30);">© 2025 faindable</p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════ MODAL ═════════════ -->
+<div x-show="modalOpen"
+     x-cloak
+     @keydown.escape.window="closeModal()"
+     class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4">
+
+  <!-- Backdrop -->
+  <div class="absolute inset-0" style="background: rgba(6,8,15,0.80); backdrop-filter: blur(8px);"
+       @click="closeModal()"></div>
+
+  <!-- Sheet -->
+  <div class="relative w-full max-w-md glass-card p-8 z-10"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0 translate-y-4 scale-95">
+
+    <!-- Close -->
+    <button @click="closeModal()" class="absolute top-4 right-4 p-1.5 rounded-lg transition-colors hover:bg-surface-var"
+            style="color: rgba(203,195,215,0.50);">
+      <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+    </button>
+
+    <!-- Success State -->
+    <div x-show="formSent" class="text-center py-6">
+      <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+           style="background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3);">
+        <span class="material-symbols-outlined icon-xl" style="color: #34d399;">check</span>
+      </div>
+      <h3 class="font-display font-bold text-xl mb-2" style="color: #dae2fd;">Vielen Dank!</h3>
+      <p class="text-sm" style="color: rgba(203,195,215,0.65);">
+        Wir melden uns innerhalb von 24 Stunden bei dir.
+      </p>
+      <button @click="closeModal(); formSent = false;"
+              class="mt-6 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+              style="background: #d0bcff; color: #381e72;">
+        Schließen
+      </button>
+    </div>
+
+    <!-- Form -->
+    <div x-show="!formSent">
+      <h3 class="font-display font-bold text-xl mb-1" style="color: #dae2fd;">Detailliertes Ergebnis</h3>
+      <p class="text-sm mb-6" style="color: rgba(203,195,215,0.55);">Wir zeigen dir deine Top-3-Hebel. Unverbindlich.</p>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium mb-1.5" style="color: #cbc3d7;">Name *</label>
+          <input type="text" x-model="form.name" placeholder="Max Muster"
+                 class="url-input w-full px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium mb-1.5" style="color: #cbc3d7;">E-Mail *</label>
+          <input type="email" x-model="form.email" placeholder="max@beispiel.de"
+                 class="url-input w-full px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium mb-1.5" style="color: #cbc3d7;">Website *</label>
+          <input type="url" x-model="form.website" placeholder="https://deine-website.de"
+                 class="url-input w-full px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium mb-1.5" style="color: #cbc3d7;">Nachricht</label>
+          <textarea x-model="form.message" rows="3" placeholder="Womit kann ich dir helfen?"
+                    class="url-input w-full px-4 py-3 text-sm resize-none"></textarea>
+        </div>
+      </div>
+
+      <button @click="submitForm()"
+              :disabled="formSubmitting || !form.name || !form.email || !form.website"
+              class="mt-5 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style="background: #d0bcff; color: #381e72;">
+        <span class="material-symbols-outlined animate-spin-slow" x-show="formSubmitting" style="font-size:16px;">progress_activity</span>
+        <span x-text="formSubmitting ? 'Wird gesendet ...' : 'Ergebnis anfragen'"></span>
+      </button>
+
+      <p class="mt-3 text-xs text-center" style="color: rgba(203,195,215,0.35);">
+        Kein Spam · Daten werden nicht weitergegeben
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/config.js"></script>
+<script src="js/analyzer.js"></script>
+<script src="js/main.js"></script>
+
 </body>
 </html>
