@@ -280,6 +280,7 @@
 
     /* ── Input ────────────────────────────────────────────────────────────── */
     .url-input {
+      font-size: 16px; /* verhindert Auto-Zoom auf iOS */
       background: rgba(19, 27, 46, 0.80);
       border: 1.5px solid rgba(149,142,160,0.25);
       color: #dae2fd;
@@ -784,7 +785,7 @@
              style="background: linear-gradient(to left, rgba(208,188,255,0.30), transparent);"></div>
 
         <!-- Bar Chart Visual — vertically centered, shifted left from edge -->
-        <div class="absolute top-0 bottom-0 flex items-center pointer-events-none" style="right: 80px;" aria-hidden="true">
+        <div class="absolute top-0 bottom-0 hidden md:flex items-center pointer-events-none" style="right: 80px;" aria-hidden="true">
           <div style="width: 190px;">
             <style>
               @keyframes barGrow {
