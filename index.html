@@ -194,16 +194,7 @@
                  auroraOpacity3 10s ease-in-out infinite;
     }
 
-    /* ── Dot Grid ─────────────────────────────────────────────────────────── */
-    .dot-grid::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(208,188,255,0.10) 0.8px, transparent 0.8px);
-      background-size: 28px 28px;
-      pointer-events: none;
-      z-index: 0;
-    }
+    /* dot-grid handled by canvas */
 
     /* ── Glass Card ───────────────────────────────────────────────────────── */
     .glass-card {
@@ -363,6 +354,8 @@
 </head>
 
 <body class="font-body" x-data="faindable()" x-cloak>
+
+<canvas id="bg-canvas" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 
 <!-- ═══════════════════════════════════════════════════════ NAVBAR ════════ -->
 <nav class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 h-16"
@@ -1144,6 +1137,94 @@
 <script src="js/config.js"></script>
 <script src="js/analyzer.js"></script>
 <script src="js/main.js"></script>
+
+<!-- Interactive dot grid -->
+<script>
+(function () {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  const SPACING  = 28;       // px between dots — matches old CSS grid
+  const BASE     = 0.10;     // resting dot opacity
+  const RADIUS   = 110;      // mouse influence radius (px)
+  const LERP     = 0.10;     // fade speed (0 = instant, 1 = never)
+  const LINE_LEN = SPACING * 3.8; // how far the cross arms reach
+  const TAU      = Math.PI * 2;
+
+  let W, H;
+  let mouseX = -9999, mouseY = -9999;
+  const bMap = new Map(); // "col,worldRow" → brightness [0..1]
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+  document.addEventListener('mouseleave', () => { mouseX = mouseY = -9999; });
+
+  function drawCross(x, y, b) {
+    ctx.lineWidth = 0.7;
+    [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => {
+      const ex = x + dx * LINE_LEN;
+      const ey = y + dy * LINE_LEN;
+      const g  = ctx.createLinearGradient(x, y, ex, ey);
+      g.addColorStop(0,   `rgba(208,188,255,${+(b * 0.60).toFixed(3)})`);
+      g.addColorStop(0.5, `rgba(208,188,255,${+(b * 0.18).toFixed(3)})`);
+      g.addColorStop(1,   `rgba(208,188,255,0)`);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = g;
+      ctx.stroke();
+    });
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+
+    const sy      = window.scrollY;
+    const cols    = Math.ceil(W / SPACING) + 1;
+    const rows    = Math.ceil(H / SPACING) + 2;
+    const startWR = Math.floor(sy / SPACING) - 1;
+
+    for (let c = 0; c < cols; c++) {
+      for (let ri = 0; ri < rows; ri++) {
+        const wr = startWR + ri;      // world-row index (unique across scroll)
+        const x  = c  * SPACING;
+        const y  = wr * SPACING - sy; // canvas y
+
+        const key = `${c},${wr}`;
+        let b = bMap.get(key) || 0;
+
+        const dx = x - mouseX, dy = y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const target = dist < RADIUS ? Math.pow(1 - dist / RADIUS, 2) : 0;
+        b += (target - b) * LERP;
+
+        if (b < 0.001) { bMap.delete(key); }
+        else            { bMap.set(key, b); }
+
+        // Cross lines (behind dots)
+        if (b > 0.03) drawCross(x, y, b);
+
+        // Dot
+        const alpha = BASE + b * (1 - BASE);
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, TAU);
+        ctx.fillStyle = `rgba(208,188,255,${+alpha.toFixed(3)})`;
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  frame();
+})();
+</script>
 
 </body>
 </html>
