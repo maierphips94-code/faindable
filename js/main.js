@@ -95,6 +95,11 @@ function faindable() {
       this.currentScanStep = 0;
       this.scanProgress = this.scanSteps[0].progress;
 
+      // Roboter starten (kurze DOM-Settle-Pause)
+      await this._sleep(60);
+      window.analysisRobot?.enter();
+      window.analysisRobot?.startConnecting();
+
       // Per-Step-Delays (ms): wie lange bleibt jeder Schritt aktiv bevor der nächste kommt
       // SEO (Index 2) und GEO (Index 3) dauern am längsten
       const stepDelays = [450, 500, 2100, 2200];
@@ -108,6 +113,9 @@ function faindable() {
             stepIndex = idx + 1;
             this.currentScanStep = stepIndex;
             this.scanProgress = this.scanSteps[stepIndex].progress;
+            // Roboter-Phasen an Schritt koppeln
+            if (stepIndex === 1) window.analysisRobot?.startScanning();
+            if (stepIndex === 3) window.analysisRobot?.startProcessing();
             if (idx + 1 < stepDelays.length) advance(idx + 1);
             else resolve();
           }, stepDelays[idx]);
@@ -124,12 +132,14 @@ function faindable() {
         this.scanProgress = this.scanSteps[4].progress;
         await this._sleep(180);
 
-        // Schritt 5: "Fertig!" — kurz grün leuchten lassen
+        // Schritt 5: "Fertig!" — Roboter wechselt auf grün
         this.currentScanStep = this.scanSteps.length - 1;
         this.scanProgress = 100;
         this.analyzedUrl = data.analyzed_url || this.url;
+        window.analysisRobot?.showComplete();
 
-        await this._sleep(280);
+        await this._sleep(600);
+        window.analysisRobot?.exit();   // Roboter verlässt die Bühne
         this.heroState = 'result';
 
         // Score-Animationen gestaffelt
@@ -168,6 +178,7 @@ function faindable() {
       this.analyzedUrl = '';
       this.currentScanStep = 0;
       this.scanProgress = 15;
+      window.analysisRobot?._hardReset();
     },
 
     // ── Score-Hints ──────────────────────────────────────────────────────────

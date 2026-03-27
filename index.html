@@ -333,6 +333,180 @@
       border-color: rgba(149,142,160,0.10);
     }
 
+    /* ── Analysis Robot ──────────────────────────────────────────────────── */
+    @keyframes robotEnter {
+      0%   { transform: translateX(70px); opacity: 0; }
+      65%  { transform: translateX(-8px); opacity: 1; }
+      82%  { transform: translateX(4px); }
+      100% { transform: translateX(0);   opacity: 1; }
+    }
+    @keyframes robotExit {
+      0%   { transform: scale(1) translate(0,0);           opacity: 1; }
+      100% { transform: scale(0.88) translate(40px,18px);  opacity: 0; }
+    }
+    @keyframes lensPulse {
+      0%, 100% { opacity: 0.45; }
+      50%      { opacity: 1; }
+    }
+    @keyframes robotVibrate {
+      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
+      25%      { transform: rotateX(-15deg) rotateY(-25deg) translateY(-1px); }
+      75%      { transform: rotateX(-15deg) rotateY(-25deg) translateY(1px); }
+    }
+    @keyframes robotSway {
+      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg); }
+      50%      { transform: rotateX(-15deg) rotateY(-19deg); }
+    }
+    @keyframes robotProcess {
+      0%   { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
+      20%  { transform: rotateX(-16deg) rotateY(-28deg) translateY(-1px); }
+      40%  { transform: rotateX(-14deg) rotateY(-22deg) translateY(1px); }
+      60%  { transform: rotateX(-15deg) rotateY(-26deg) translateY(-1px); }
+      80%  { transform: rotateX(-15deg) rotateY(-24deg) translateY(0); }
+      100% { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
+    }
+    @keyframes robotNod {
+      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg); }
+      50%      { transform: rotateX(-22deg) rotateY(-25deg); }
+    }
+    @keyframes particleFly {
+      0%   { transform: translateX(0) translateY(0); opacity: 0; }
+      15%  { opacity: 1; }
+      100% { transform: translateX(80px) translateY(var(--end-y,0px)); opacity: 0; }
+    }
+    @keyframes dataFloat {
+      0%   { transform: translateY(0);     opacity: 0.55; }
+      100% { transform: translateY(-36px); opacity: 0; }
+    }
+    @keyframes beamPulse {
+      0%, 100% { opacity: 0.8; }
+      50%      { opacity: 1; }
+    }
+
+    #analysis-robot {
+      position: absolute; inset: 0;
+      display: none; /* shown by JS */
+      flex-direction: column; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .robot-container { perspective: 700px; perspective-origin: 50% 40%; position: relative; }
+    .robot-3d {
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(-25deg);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .antenna-stem {
+      width: 3px; height: 16px;
+      background: linear-gradient(180deg,#6b6880,#3d3a4e);
+      border-radius: 2px;
+    }
+    .antenna-led {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #d0bcff;
+      box-shadow: 0 0 8px rgba(208,188,255,0.65);
+      margin-top: -4px; position: relative; z-index: 1;
+      transition: background .4s, box-shadow .4s;
+    }
+    .robot-topcap {
+      width: 84px; height: 10px;
+      background: linear-gradient(135deg,#3a4260,#272f47);
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(255,255,255,0.07); border-bottom: none;
+      box-shadow: 0 -4px 8px rgba(0,0,0,.30);
+    }
+    .robot-mainbody {
+      width: 110px; height: 90px;
+      background: linear-gradient(145deg,#2d3449 0%,#1e2538 60%,#1a2035 100%);
+      border-radius: 14px 14px 10px 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative; overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset -3px 0 8px rgba(0,0,0,.25),
+        8px 14px 32px rgba(0,0,0,.65),
+        -2px -2px 8px rgba(0,0,0,.3);
+    }
+    .robot-mainbody::after {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      background: linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 50%);
+      pointer-events:none;
+    }
+    .robot-face {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 7px; padding: 16px;
+      width: 100%; height: 100%; box-sizing: border-box;
+      align-items: center; justify-items: center;
+    }
+    .lens {
+      border-radius: 50%; position: relative; flex-shrink: 0;
+      transition: box-shadow .4s, background .5s;
+    }
+    .lens::before {
+      content:''; position:absolute; top:18%; left:22%;
+      width:28%; height:28%;
+      background: rgba(255,255,255,.22); border-radius:50%; z-index:2;
+    }
+    .lens-sm {
+      width:30px; height:30px;
+      background: radial-gradient(circle at 35% 35%,#1a1f30 0%,#102456 60%,#0d3a8f 100%);
+      box-shadow: inset 0 0 8px rgba(5,102,217,.25), 0 0 6px rgba(5,102,217,.15);
+    }
+    .lens-main {
+      width:42px; height:42px;
+      background: radial-gradient(circle at 35% 35%,#1a1525 0%,#3d1f7a 55%,#7c3aed 100%);
+      box-shadow: inset 0 0 12px rgba(160,120,255,.30), 0 0 0 rgba(160,120,255,0);
+      transition: box-shadow .5s, background .5s;
+    }
+    .robot-legs { display:flex; gap:36px; margin-top:2px; }
+    .robot-leg {
+      width:14px; height:22px;
+      background: linear-gradient(180deg,#2a3046,#161c2e);
+      border-radius: 3px 3px 7px 7px;
+      border: 1px solid rgba(255,255,255,.05);
+      box-shadow: 3px 6px 10px rgba(0,0,0,.45);
+    }
+    .robot-ground-shadow {
+      width:110px; height:18px;
+      background: radial-gradient(ellipse,rgba(0,0,0,.50) 0%,transparent 70%);
+      margin-top:4px; pointer-events:none;
+    }
+    .robot-scan-beam {
+      position: absolute; top: 50%; right: 52%;
+      transform: translateY(-50%); margin-top:6px;
+      width: 110px; height: 55px;
+      background: linear-gradient(to right,transparent 0%,rgba(160,120,255,.07) 40%,rgba(160,120,255,.16) 100%);
+      clip-path: polygon(100% 25%,0% 0%,0% 100%,100% 75%);
+      opacity: 0; transition: opacity .6s ease; pointer-events:none;
+      animation: beamPulse 2s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+    .robot-particle {
+      position: absolute; width:3px; height:3px;
+      border-radius:50%; pointer-events:none;
+    }
+    .robot-data-bit {
+      position:absolute; font-family:'Courier New',monospace;
+      font-size:9px; color:#958ea0; pointer-events:none; user-select:none;
+    }
+    .robot-checkmark-el {
+      position:absolute; top:-10px; left:50%;
+      transform: translateX(-50%) scale(0);
+      font-size:28px; color:#10b981;
+      text-shadow: 0 0 16px rgba(16,185,129,.6);
+      transition: transform .45s cubic-bezier(.34,1.56,.64,1);
+      pointer-events:none; z-index:10;
+    }
+    .robot-checkmark-el.visible { transform: translateX(-50%) scale(1); }
+
+    @media (max-width:767px) {
+      #analysis-robot { transform: scale(0.75); transform-origin: center top; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .robot-3d,.lens,.antenna-led,.robot-scan-beam {
+        animation: none !important; transition: opacity .3s !important;
+      }
+    }
+
     /* ── Bento Grid Glow ──────────────────────────────────────────────────── */
     .bento-glow {
       box-shadow: inset 0 1px 0 rgba(208,188,255,0.12);
@@ -471,124 +645,82 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="flex flex-col items-center text-center max-w-md mx-auto w-full">
+         class="flex flex-col md:flex-row items-center gap-8 max-w-3xl mx-auto w-full">
 
-      <!-- Radar Animation -->
-      <div class="mb-6">
-        <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="sArmGrad" x1="80" y1="80" x2="80" y2="6" gradientUnits="userSpaceOnUse">
-              <stop offset="0%"   stop-color="#d0bcff" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#d0bcff" stop-opacity="0.05"/>
-            </linearGradient>
-            <style>
-              /* 3s rotation */
-              .s-sweep { animation: sSpin 3s linear infinite; transform-origin: 80px 80px; }
-              @keyframes sSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-              .s-ring-pulse { animation: sRingP 3s ease-in-out infinite; }
-              @keyframes sRingP { 0%,100%{opacity:.18} 50%{opacity:.40} }
-
-              /*
-               * Blip: bright flash then fade. Period = 3s (matches sweep).
-               * Delay = -(3 * (1 - angle/360))
-               * Angles (cx,cy from center 80,80 — clockwise from top):
-               *  p1 (80,14)  θ=0°   delay=-3.00s
-               *  p2 (122,42) θ=55°  delay=-2.54s
-               *  p3 (134,80) θ=90°  delay=-2.25s
-               *  p4 (120,124)θ=140° delay=-1.83s
-               *  p5 (80,144) θ=180° delay=-1.50s
-               *  p6 (38,120) θ=222° delay=-1.15s
-               *  p7 (26,80)  θ=270° delay=-0.75s
-               *  p8 (44,38)  θ=315° delay=-0.38s
-               *  p9 (108,58) θ=44°  delay=-2.63s  (mid ring)
-               *  p10(112,110)θ=130° delay=-1.92s
-               *  p11(50,112) θ=224° delay=-1.13s
-               *  p12(52,52)  θ=318° delay=-0.35s
-               */
-              @keyframes sBlip {
-                0%   { opacity: 1;    }
-                35%  { opacity: 0.50; }
-                70%  { opacity: 0.15; }
-                100% { opacity: 0.10; }
-              }
-              .sp { animation: sBlip 3s linear infinite; }
-              .sp1  { animation-delay: -3.00s; } .sp2  { animation-delay: -2.54s; }
-              .sp3  { animation-delay: -2.25s; } .sp4  { animation-delay: -1.83s; }
-              .sp5  { animation-delay: -1.50s; } .sp6  { animation-delay: -1.15s; }
-              .sp7  { animation-delay: -0.75s; } .sp8  { animation-delay: -0.38s; }
-              .sp9  { animation-delay: -2.63s; } .sp10 { animation-delay: -1.92s; }
-              .sp11 { animation-delay: -1.13s; } .sp12 { animation-delay: -0.35s; }
-            </style>
-          </defs>
-          <!-- Rings -->
-          <circle cx="80" cy="80" r="66" stroke="rgba(208,188,255,0.10)" stroke-width="1" fill="none"/>
-          <circle cx="80" cy="80" r="48" stroke="rgba(208,188,255,0.16)" stroke-width="1" fill="none" class="s-ring-pulse"/>
-          <circle cx="80" cy="80" r="30" stroke="rgba(208,188,255,0.22)" stroke-width="1" fill="none"/>
-          <circle cx="80" cy="80" r="14" stroke="rgba(208,188,255,0.30)" stroke-width="1" fill="none" class="s-ring-pulse" style="animation-delay:-.5s"/>
-          <!-- Cross hairs -->
-          <line x1="80" y1="6"  x2="80" y2="154" stroke="rgba(208,188,255,0.05)" stroke-width="1"/>
-          <line x1="6"  y1="80" x2="154" y2="80"  stroke="rgba(208,188,255,0.05)" stroke-width="1"/>
-          <!-- Outer ring points -->
-          <circle class="sp sp1"  cx="80"  cy="14"  r="3"   fill="#d0bcff"/>
-          <circle class="sp sp2"  cx="122" cy="42"  r="2.5" fill="#adc6ff"/>
-          <circle class="sp sp3"  cx="134" cy="80"  r="3"   fill="#d0bcff"/>
-          <circle class="sp sp4"  cx="120" cy="124" r="2.5" fill="#fbabff"/>
-          <circle class="sp sp5"  cx="80"  cy="142" r="3"   fill="#adc6ff"/>
-          <circle class="sp sp6"  cx="38"  cy="120" r="2.5" fill="#d0bcff"/>
-          <circle class="sp sp7"  cx="26"  cy="80"  r="3"   fill="#fbabff"/>
-          <circle class="sp sp8"  cx="44"  cy="38"  r="2.5" fill="#adc6ff"/>
-          <!-- Mid ring points -->
-          <circle class="sp sp9"  cx="108" cy="58"  r="2"   fill="#d0bcff"/>
-          <circle class="sp sp10" cx="112" cy="110" r="2"   fill="#adc6ff"/>
-          <circle class="sp sp11" cx="50"  cy="112" r="2"   fill="#fbabff"/>
-          <circle class="sp sp12" cx="52"  cy="52"  r="2"   fill="#d0bcff"/>
-          <!-- Sweep -->
-          <g class="s-sweep">
-            <path d="M80 80 L80 8 A72 72 0 0 0 35 24 Z" fill="rgba(208,188,255,0.06)"/>
-            <line x1="80" y1="80" x2="80" y2="8" stroke="url(#sArmGrad)" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="80" cy="10" r="2.5" fill="#d0bcff" opacity="0.8"/>
-          </g>
-          <!-- Center -->
-          <circle cx="80" cy="80" r="3" fill="#d0bcff" opacity="0.9"/>
-          <circle cx="80" cy="80" r="7" fill="#d0bcff" opacity="0.12"/>
-        </svg>
-      </div>
-
-      <!-- URL -->
-      <p class="text-xs mb-5 truncate w-full px-4 py-2 rounded-lg"
-         style="color: rgba(203,195,215,0.55); background: rgba(13,19,38,0.70); font-family: monospace;">
-        <span x-text="url"></span>
-      </p>
-
-      <!-- Progress Bar -->
-      <div class="progress-track w-full mb-2">
-        <div class="progress-fill" :style="`width: ${scanProgress}%`"></div>
-      </div>
-      <div class="flex justify-between text-xs w-full mb-6" style="color: rgba(203,195,215,0.40);">
-        <span>Analyse läuft</span>
-        <span x-text="`${scanProgress}%`"></span>
-      </div>
-
-      <!-- Steps — tauchen nacheinander auf -->
-      <div class="w-full space-y-2 text-left">
-        <template x-for="(step, i) in scanSteps" :key="i">
-          <div x-show="i <= currentScanStep"
-               x-transition:enter="transition ease-out duration-500"
-               x-transition:enter-start="opacity-0 translate-y-2"
-               x-transition:enter-end="opacity-100 translate-y-0"
-               class="flex items-center gap-2.5 px-3 py-2 rounded-lg"
-               :style="i < currentScanStep
-                 ? 'background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.15);'
-                 : 'background: rgba(208,188,255,0.06); border: 1px solid rgba(208,188,255,0.18);'">
-            <span class="material-symbols-outlined flex-shrink-0"
-                  style="font-size:14px;"
-                  :style="i < currentScanStep ? 'color:#34d399;' : 'color:#d0bcff;'"
-                  x-text="i < currentScanStep ? 'check_circle' : 'radio_button_checked'"></span>
-            <span class="text-xs font-medium"
-                  :style="i < currentScanStep ? 'color:rgba(203,195,215,0.50);' : 'color:#dae2fd;'"
-                  x-text="step.label"></span>
+      <!-- Robot slot (top on mobile, right on desktop) -->
+      <div class="flex-shrink-0 relative order-1 md:order-2"
+           style="width:220px; height:230px;">
+        <div id="analysis-robot" aria-hidden="true">
+          <!-- Scan beam -->
+          <div id="scan-beam" class="robot-scan-beam"></div>
+          <!-- 3D Robot -->
+          <div class="robot-container">
+            <div class="robot-3d" id="robot-body">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div class="antenna-stem"></div>
+                <div class="antenna-led" id="antenna-led"></div>
+              </div>
+              <div class="robot-topcap"></div>
+              <div class="robot-mainbody">
+                <div class="robot-face">
+                  <div class="lens lens-sm" id="lens-1"></div>
+                  <div class="lens lens-sm" id="lens-2"></div>
+                  <div class="lens lens-sm" id="lens-3"></div>
+                  <div class="lens lens-main" id="lens-main"></div>
+                </div>
+              </div>
+              <div class="robot-legs">
+                <div class="robot-leg"></div>
+                <div class="robot-leg"></div>
+              </div>
+            </div>
           </div>
-        </template>
+          <div class="robot-ground-shadow"></div>
+          <!-- Overlays -->
+          <div id="particles"  style="position:absolute;inset:0;pointer-events:none;overflow:visible;"></div>
+          <div id="data-bits"  style="position:absolute;inset:0;pointer-events:none;overflow:visible;"></div>
+          <div id="robot-checkmark" class="robot-checkmark-el">✓</div>
+        </div>
+      </div>
+
+      <!-- Progress info (bottom on mobile, left on desktop) -->
+      <div class="flex-1 w-full min-w-0 order-2 md:order-1">
+        <!-- URL chip -->
+        <p class="text-xs mb-5 truncate w-full px-4 py-2 rounded-lg"
+           style="color:rgba(203,195,215,0.55);background:rgba(13,19,38,0.70);font-family:monospace;">
+          <span x-text="url"></span>
+        </p>
+
+        <!-- Progress Bar -->
+        <div class="progress-track w-full mb-2">
+          <div class="progress-fill" :style="`width: ${scanProgress}%`"></div>
+        </div>
+        <div class="flex justify-between text-xs w-full mb-6" style="color:rgba(203,195,215,0.40);">
+          <span>Analyse läuft</span>
+          <span x-text="`${scanProgress}%`"></span>
+        </div>
+
+        <!-- Steps -->
+        <div class="w-full space-y-2">
+          <template x-for="(step, i) in scanSteps" :key="i">
+            <div x-show="i <= currentScanStep"
+                 x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg"
+                 :style="i < currentScanStep
+                   ? 'background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);'
+                   : 'background:rgba(208,188,255,0.06);border:1px solid rgba(208,188,255,0.18);'">
+              <span class="material-symbols-outlined flex-shrink-0"
+                    style="font-size:14px;"
+                    :style="i < currentScanStep ? 'color:#34d399;' : 'color:#d0bcff;'"
+                    x-text="i < currentScanStep ? 'check_circle' : 'radio_button_checked'"></span>
+              <span class="text-xs font-medium"
+                    :style="i < currentScanStep ? 'color:rgba(203,195,215,0.50);' : 'color:#dae2fd;'"
+                    x-text="step.label"></span>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
 
@@ -1135,6 +1267,7 @@
 <!-- Scripts -->
 <script src="js/config.js"></script>
 <script src="js/analyzer.js"></script>
+<script src="js/robot.js"></script>
 <script src="js/main.js"></script>
 
 <!-- Interactive dot grid -->
