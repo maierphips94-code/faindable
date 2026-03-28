@@ -275,15 +275,19 @@ window.generateFaindableReport = function(data) {
     y += 2;
 
     // Suggestion
-    checkY(12);
-    const maxSugW = CW - 4;
+    const sugFontSize = 7.5;
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(7.5);
+    doc.setFontSize(sugFontSize);
+    const sugText = 'Verbesserung: ' + suggestion;
+    const sugX = ML + 2;
+    const maxSugW = PW - MR - sugX - 4;  // guaranteed safe right margin
+    const lines = doc.splitTextToSize(sugText, maxSugW);
+    const lh = sugFontSize * 0.52;
+    const sugBlockH = lines.length * lh + 8;
+    checkY(sugBlockH);
     doc.setTextColor(...C_MUTED);
-    const lines = doc.splitTextToSize('→ Verbesserung: ' + suggestion, maxSugW);
-    const lh = 3.8;
-    lines.forEach((line, i) => doc.text(line, ML + 2, y + i * lh));
-    y += lines.length * lh + 5;
+    lines.forEach((line, i) => doc.text(line, sugX, y + i * lh));
+    y += sugBlockH;
 
     // Divider
     doc.setDrawColor(...C_BORDER);
