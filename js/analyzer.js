@@ -242,36 +242,39 @@ class PageAnalyzer {
   }
 
   // ── PageSpeed-Tech-Punkte (geteilt zwischen SEO & GEO) ─────────────────────
-  _calcTechPoints(ps, pathChecks) {
+  _calcTech(ps, pathChecks) {
+    const C = {};
     let pts = 0;
 
-    if (this.q('meta[name="viewport"]'))  pts += 15;
-    if (this.q('link[rel="canonical"]'))  pts += 10;
+    C.viewport  = !!this.q('meta[name="viewport"]');  if (C.viewport)  pts += 15;
+    C.canonical = !!this.q('link[rel="canonical"]');  if (C.canonical) pts += 10;
 
     const ogTitle = this.q('meta[property="og:title"]')?.getAttribute('content');
     const ogDesc  = this.q('meta[property="og:description"]')?.getAttribute('content');
     const ogImg   = this.q('meta[property="og:image"]')?.getAttribute('content');
-    if (ogTitle && ogDesc && ogImg) pts += 15;
-    else if (ogTitle || ogDesc)     pts += 7;
+    C.ogFull    = !!(ogTitle && ogDesc && ogImg);
+    C.ogPartial = !!(ogTitle || ogDesc) && !C.ogFull;
+    if (C.ogFull) pts += 15; else if (C.ogPartial) pts += 7;
 
     const robotsMeta = this.q('meta[name="robots"]')?.getAttribute('content') ?? '';
-    if (!/noindex/i.test(robotsMeta)) pts += 10;
+    C.noindex = !/noindex/i.test(robotsMeta); if (C.noindex) pts += 10;
 
-    const imgs       = this.qa('img');
-    const imgsWithAlt = imgs.filter(img => (img.getAttribute('alt') ?? '').trim().length > 0);
-    if (imgs.length === 0 || imgsWithAlt.length / imgs.length > 0.8) pts += 10;
+    const imgs         = this.qa('img');
+    const imgsWithAlt  = imgs.filter(img => (img.getAttribute('alt') ?? '').trim().length > 0);
+    C.imgAlt = imgs.length === 0 || imgsWithAlt.length / imgs.length > 0.8; if (C.imgAlt) pts += 10;
 
-    if (pathChecks.robots.ok)  pts += 10;
-    if (pathChecks.sitemap.ok) pts += 10;
+    C.robotsTxt  = pathChecks.robots.ok;  if (C.robotsTxt)  pts += 10;
+    C.sitemapXml = pathChecks.sitemap.ok; if (C.sitemapXml) pts += 10;
 
-    if (ps.lcp  != null) { if (ps.lcp  < 2.5) pts += 10; else if (ps.lcp  < 4)   pts += 5; }
-    if (ps.cls  != null) { if (ps.cls  < 0.1) pts += 10; else if (ps.cls  < 0.25) pts += 5; }
-    if (ps.inp  != null) { if (ps.inp  < 200)  pts += 10; else if (ps.inp  < 500)  pts += 5; }
-
-    // Kein PageSpeed-Key → neutrale Teilgutschrift
+    C.lcpGood = ps.lcp != null ? ps.lcp < 2.5 : null;
+    C.clsGood = ps.cls != null ? ps.cls < 0.1 : null;
+    C.inpGood = ps.inp != null ? ps.inp < 200  : null;
+    if (ps.lcp != null) { if (ps.lcp < 2.5) pts += 10; else if (ps.lcp < 4)    pts += 5; }
+    if (ps.cls != null) { if (ps.cls < 0.1) pts += 10; else if (ps.cls < 0.25) pts += 5; }
+    if (ps.inp != null) { if (ps.inp < 200) pts += 10; else if (ps.inp < 500)  pts += 5; }
     if (ps.lcp == null && ps.cls == null && ps.inp == null) pts += 15;
 
-    return Math.min(100, (pts / 100) * 100);
+    return { score: Math.min(100, pts), checks: C };
   }
 
   // ══════════════════════════════════════════════════════════ SEO ANALYSE ════
@@ -280,37 +283,37 @@ class PageAnalyzer {
     let manualChecks = 0;
     const allLinks = this._allLinksText();
     const text     = this.bodyText.toLowerCase();
+    const schemas  = this._getSchemas();
+    const C        = {};   // individual check results
 
-    // ── Kategorie 1: E-E-A-T (35%) ──────────────────────────────────────────
+    // ── E-E-A-T ────────────────────────────────────────────────────────────
+    C.https        = this.url.startsWith('https://');
+    C.legal        = /impressum|datenschutz|agb|legal|privacy|cookie/.test(allLinks + text);
+    C.author       = /autor|author|über mich|about me|team/.test(allLinks + text);
+    C.contact      = /kontakt|contact/.test(allLinks);
+    C.personSchema = schemas.some(s => s?.author || s?.['@type'] === 'Person');
+
     let eeatPts = 0;
-
-    if (this.url.startsWith('https://'))                                        eeatPts += 20;
-    if (/impressum|datenschutz|agb|legal|privacy|cookie/.test(allLinks + text)) eeatPts += 15;
-    if (/autor|author|über mich|about me|team/.test(allLinks + text))           eeatPts += 10;
-    if (/kontakt|contact/.test(allLinks))                                       eeatPts += 10;
-
-    const schemas = this._getSchemas();
-    if (schemas.some(s => s?.author || s?.['@type'] === 'Person'))              eeatPts += 5;
-
-    manualChecks += 2; // Backlinks, Erwähnungen in Medien
-
+    if (C.https)        eeatPts += 20;
+    if (C.legal)        eeatPts += 15;
+    if (C.author)       eeatPts += 10;
+    if (C.contact)      eeatPts += 10;
+    if (C.personSchema) eeatPts += 5;
+    manualChecks += 2;
     const eeatScore = Math.min(100, (eeatPts / 60) * 100);
 
-    // ── Kategorie 2: On-Page & Semantik (25%) ────────────────────────────────
-    let onPts = 0;
-
-    const title = this.q('title')?.textContent?.trim() ?? '';
-    if (title)                                   onPts += 15;
-    if (title.length >= 50 && title.length <= 60) onPts += 10;
-
+    // ── On-Page & Semantik ────────────────────────────────────────────────
+    const title    = this.q('title')?.textContent?.trim() ?? '';
     const metaDesc = this.q('meta[name="description"]')?.getAttribute('content') ?? '';
-    if (metaDesc)                                                 onPts += 10;
-    if (metaDesc.length >= 130 && metaDesc.length <= 160)         onPts += 5;
+    const h1Count  = this.qa('h1').length;
 
-    const h1Count = this.qa('h1').length;
-    if (h1Count === 1)          onPts += 15;
-    if (this.qa('h2').length >= 2) onPts += 10;
-    if (this.qa('h3').length > 0)  onPts += 5;
+    C.titleExists    = !!title;
+    C.titleLen       = title.length >= 50 && title.length <= 60;
+    C.metaDescExists = !!metaDesc;
+    C.metaDescLen    = metaDesc.length >= 130 && metaDesc.length <= 160;
+    C.h1Single       = h1Count === 1;
+    C.h2Multiple     = this.qa('h2').length >= 2;
+    C.h3Present      = this.qa('h3').length > 0;
 
     try {
       const host = new URL(this.url).hostname;
@@ -318,60 +321,83 @@ class PageAnalyzer {
         const href = a.getAttribute('href') ?? '';
         return href.startsWith('/') || href.includes(host);
       }).length;
-      if (intLinks > 3) onPts += 10;
-    } catch { /* ignore */ }
+      C.intLinks = intLinks > 3;
+    } catch { C.intLinks = false; }
 
     const anchorTexts = this.qa('a').map(a => a.textContent.trim().toLowerCase());
     const badAnchors  = anchorTexts.filter(t => /^(hier|here|more|click|mehr|weiter|link|read more)$/.test(t));
-    if (anchorTexts.length === 0 || badAnchors.length / anchorTexts.length < 0.3) onPts += 10;
+    C.anchorQuality   = anchorTexts.length === 0 || badAnchors.length / anchorTexts.length < 0.3;
+    C.urlClean        = !/[?&]p=\d+/.test(this.url);
+    C.favicon         = !!this.q('link[rel*="icon"]');
 
-    if (!/[?&]p=\d+/.test(this.url))             onPts += 5;
-    if (this.q('link[rel*="icon"]'))              onPts += 5;
-
+    let onPts = 0;
+    if (C.titleExists)    onPts += 15;
+    if (C.titleLen)       onPts += 10;
+    if (C.metaDescExists) onPts += 10;
+    if (C.metaDescLen)    onPts += 5;
+    if (C.h1Single)       onPts += 15;
+    if (C.h2Multiple)     onPts += 10;
+    if (C.h3Present)      onPts += 5;
+    if (C.intLinks)       onPts += 10;
+    if (C.anchorQuality)  onPts += 10;
+    if (C.urlClean)       onPts += 5;
+    if (C.favicon)        onPts += 5;
     const onPageScore = Math.min(100, (onPts / 100) * 100);
 
-    // ── Kategorie 3: Technical SEO (20%) ────────────────────────────────────
-    const techScore = this._calcTechPoints(ps, pathChecks);
+    // ── Technical SEO ─────────────────────────────────────────────────────
+    const techResult = this._calcTech(ps, pathChecks);
+    const techScore  = techResult.score;
+    C.viewport   = techResult.checks.viewport;
+    C.canonical  = techResult.checks.canonical;
+    C.ogFull     = techResult.checks.ogFull;
+    C.ogPartial  = techResult.checks.ogPartial;
+    C.noindex    = techResult.checks.noindex;
+    C.imgAlt     = techResult.checks.imgAlt;
+    C.robotsTxt  = techResult.checks.robotsTxt;
+    C.sitemapXml = techResult.checks.sitemapXml;
+    C.lcpGood    = techResult.checks.lcpGood;
+    C.clsGood    = techResult.checks.clsGood;
+    C.inpGood    = techResult.checks.inpGood;
 
-    // ── Kategorie 4: Lokales SEO (10%) ───────────────────────────────────────
-    let localPts = 0;
-
+    // ── Lokales SEO ───────────────────────────────────────────────────────
     const localSchema = this._getSchema('LocalBusiness') ||
                         this._getSchema('Organization')  ||
                         this._getSchema('Store')         ||
                         this._getSchema('Restaurant');
-    if (localSchema) localPts += 30;
+    C.localSchema = !!localSchema;
+    C.phone       = /\+49|\(0\d+\)|☎|tel:|fon:/i.test(this.bodyText);
+    C.address     = /straße|str\.|strasse|platz|weg|allee/i.test(this.bodyText);
 
-    if (/\+49|\(0\d+\)|☎|tel:|fon:/i.test(this.bodyText)) localPts += 20;
-    if (/straße|str\.|strasse|platz|weg|allee/i.test(this.bodyText)) localPts += 20;
-
-    manualChecks += 2; // Google Business Profile, NAP
-
+    let localPts = 0;
+    if (C.localSchema) localPts += 30;
+    if (C.phone)       localPts += 20;
+    if (C.address)     localPts += 20;
+    manualChecks += 2;
     const localScore = Math.min(100, (localPts / 70) * 100);
 
-    // ── Kategorie 5: User Signals (10%) ──────────────────────────────────────
-    let userPts = 0;
-
-    // Heuristik: keine aufdringlichen Overlays
+    // ── User Signals ──────────────────────────────────────────────────────
     const fixedDivs = this.qa('div').filter(el => {
       const style = el.getAttribute('style') ?? '';
       const cls   = el.getAttribute('class') ?? '';
       return /position:\s*fixed/.test(style) || /\b(fixed|sticky)\b/.test(cls);
     });
     const badOverlays = fixedDivs.filter(el => !(el.getAttribute('aria-label') || el.getAttribute('role')));
-    if (badOverlays.length < 2) userPts += 20;
-
-    if (this.qa('img').length > 0) userPts += 20;
-    if (this.qa('iframe[src*="youtube"], iframe[src*="vimeo"], iframe[src*="youtu.be"]').length > 0) userPts += 20;
-
     const words = this.bodyText.trim().split(/\s+/).filter(w => w.length > 2).length;
-    if (words > 300) userPts += 20;
 
-    manualChecks += 2; // Bounce Rate, Dwell Time
+    C.noOverlays = badOverlays.length < 2;
+    C.hasImages  = this.qa('img').length > 0;
+    C.hasVideo   = this.qa('iframe[src*="youtube"], iframe[src*="vimeo"], iframe[src*="youtu.be"]').length > 0;
+    C.contentLen = words > 300;
 
+    let userPts = 0;
+    if (C.noOverlays) userPts += 20;
+    if (C.hasImages)  userPts += 20;
+    if (C.hasVideo)   userPts += 20;
+    if (C.contentLen) userPts += 20;
+    manualChecks += 2;
     const userScore = Math.min(100, (userPts / 80) * 100);
 
-    // ── Gewichteter Gesamt-Score ─────────────────────────────────────────────
+    // ── Gesamt-Score (gewichtet) ───────────────────────────────────────────
     let seoScore = Math.round(
       eeatScore  * 0.35 +
       onPageScore * 0.25 +
@@ -380,28 +406,19 @@ class PageAnalyzer {
       userScore  * 0.10
     );
 
-    // ── Bonus ────────────────────────────────────────────────────────────────
     let bonus = 0;
-
     const ytFrames = this.qa('iframe[src*="youtube"], iframe[src*="youtu.be"]');
     if (ytFrames.length > 0 && ytFrames[0].getAttribute('title')) bonus += 5;
-
     if (schemas.some(s => s?.['@type'] === 'AggregateRating' || s?.aggregateRating)) bonus += 3;
     if (/202[4-6]/.test(this.html)) bonus += 2;
-
     seoScore = Math.min(110, seoScore + bonus);
 
     return {
       score: seoScore,
       manualChecks,
       bonus,
-      cats: {
-        eeat:   Math.round(eeatScore),
-        onPage: Math.round(onPageScore),
-        tech:   Math.round(techScore),
-        local:  Math.round(localScore),
-        user:   Math.round(userScore),
-      },
+      cats:   { eeat: Math.round(eeatScore), onPage: Math.round(onPageScore), tech: Math.round(techScore), local: Math.round(localScore), user: Math.round(userScore) },
+      checks: C,
     };
   }
 
@@ -409,152 +426,187 @@ class PageAnalyzer {
 
   analyzeGEO(ps, pathChecks) {
     let manualChecks = 0;
-    const schemas    = this._getSchemas();
-    const allLinks   = this._allLinksText();
-    const text       = this.bodyText.toLowerCase();
+    const schemas  = this._getSchemas();
+    const allLinks = this._allLinksText();
+    const text     = this.bodyText.toLowerCase();
+    const C        = {};
 
-    // ── Kategorie 1: Structured Data / Schema.org (40%) ──────────────────────
+    // ── Structured Data ───────────────────────────────────────────────────
     let structPts = 0, structMax = 0;
 
-    // Organization / LocalBusiness
     const orgSchema = this._getSchema('Organization') ||
                       this._getSchema('LocalBusiness') ||
                       this._getSchema('Store')         ||
                       this._getSchema('Restaurant');
     structMax += 100;
-    if (orgSchema) {
+    C.orgSchema    = !!orgSchema;
+    C.orgName      = !!orgSchema?.name;
+    C.orgDesc      = !!orgSchema?.description;
+    C.orgAddress   = !!orgSchema?.address;
+    C.orgPhone     = !!orgSchema?.telephone;
+    C.orgLogo      = !!orgSchema?.logo;
+    C.orgSameAs    = Array.isArray(orgSchema?.sameAs) && orgSchema.sameAs.length > 0;
+    C.orgHours     = !!(orgSchema?.openingHours || orgSchema?.openingHoursSpecification);
+    C.orgGeo       = !!(orgSchema?.geo || orgSchema?.hasMap);
+    if (C.orgSchema) {
       structPts += 20;
-      if (orgSchema.name)        structPts += 10;
-      if (orgSchema.description) structPts += 10;
-      if (orgSchema.address)     structPts += 15;
-      if (orgSchema.telephone)   structPts += 10;
-      if (orgSchema.url)         structPts += 5;
-      if (orgSchema.logo)        structPts += 10;
-      if (Array.isArray(orgSchema.sameAs) && orgSchema.sameAs.length > 0) structPts += 10;
-      if (orgSchema.openingHours || orgSchema.openingHoursSpecification)   structPts += 5;
-      if (orgSchema.geo || orgSchema.hasMap) structPts += 5;
+      if (C.orgName)    structPts += 10;
+      if (C.orgDesc)    structPts += 10;
+      if (C.orgAddress) structPts += 15;
+      if (C.orgPhone)   structPts += 10;
+      if (orgSchema?.url)  structPts += 5;
+      if (C.orgLogo)    structPts += 10;
+      if (C.orgSameAs)  structPts += 10;
+      if (C.orgHours)   structPts += 5;
+      if (C.orgGeo)     structPts += 5;
     }
 
-    // FAQPage
     const faqSchema = this._getSchema('FAQPage');
     structMax += 50;
-    if (faqSchema) {
+    C.faqSchema = !!faqSchema;
+    C.faqItems  = Array.isArray(faqSchema?.mainEntity) && faqSchema.mainEntity.length >= 2;
+    if (C.faqSchema) {
       structPts += 30;
-      const qs = faqSchema.mainEntity;
-      if (Array.isArray(qs) && qs.length >= 2) structPts += 20;
+      if (C.faqItems) structPts += 20;
     }
 
-    // Service / Product
     const serviceSchema = this._getSchema('Service') || this._getSchema('Product');
     structMax += 30;
-    if (serviceSchema) {
+    C.serviceSchema = !!serviceSchema;
+    C.serviceDesc   = !!(serviceSchema?.serviceType || serviceSchema?.description);
+    if (C.serviceSchema) {
       structPts += 20;
-      if (serviceSchema.serviceType || serviceSchema.description) structPts += 10;
+      if (C.serviceDesc) structPts += 10;
     }
 
-    // Article / BlogPosting
     const articleSchema = this._getSchema('Article') ||
                           this._getSchema('BlogPosting') ||
                           this._getSchema('NewsArticle');
     structMax += 40;
-    if (articleSchema) {
+    C.articleSchema  = !!articleSchema;
+    C.articleAuthor  = !!articleSchema?.author;
+    C.articleDate    = !!articleSchema?.datePublished;
+    if (C.articleSchema) {
       structPts += 20;
-      if (articleSchema.author)        structPts += 10;
-      if (articleSchema.datePublished) structPts += 10;
+      if (C.articleAuthor) structPts += 10;
+      if (C.articleDate)   structPts += 10;
     }
 
-    // AggregateRating
     const aggRating = this._getSchema('AggregateRating') ||
                       schemas.find(s => s?.aggregateRating);
     structMax += 30;
-    if (aggRating) {
+    C.ratingSchema = !!aggRating;
+    C.ratingFull   = !!(aggRating?.aggregateRating?.ratingValue && aggRating?.aggregateRating?.reviewCount) ||
+                     !!(aggRating?.ratingValue && aggRating?.reviewCount);
+    if (C.ratingSchema) {
       structPts += 20;
-      const rd = aggRating?.aggregateRating ?? aggRating;
-      if (rd?.ratingValue && rd?.reviewCount) structPts += 10;
+      if (C.ratingFull) structPts += 10;
     }
 
     const structuredScore = structMax > 0 ? Math.min(100, (structPts / structMax) * 100) : 0;
 
-    // ── Kategorie 2: Content-Struktur (25%) ──────────────────────────────────
+    // ── Content-Struktur ──────────────────────────────────────────────────
     let contentPts = 0;
 
-    if (this.qa('h1').length === 1)    contentPts += 15;
-    if (this.qa('h2').length >= 2)     contentPts += 10;
-    if (this.qa('h3').length > 0)      contentPts += 5;
-    if (this.q('main'))                contentPts += 10;
-    if (this.qa('article, section').length > 0) contentPts += 10;
-    if (this.q('aside'))               contentPts += 5;
+    C.geoH1      = this.qa('h1').length === 1;
+    C.geoH2      = this.qa('h2').length >= 2;
+    C.geoH3      = this.qa('h3').length > 0;
+    C.mainTag    = !!this.q('main');
+    C.sectionTag = this.qa('article, section').length > 0;
+    C.asideTag   = !!this.q('aside');
 
     const headingTexts = this.qa('h1, h2, h3, h4').map(h => h.textContent.trim().toLowerCase());
-    const wQuestions   = headingTexts.filter(h =>
+    C.wQuestions = headingTexts.some(h =>
       /^(wer|was|wo|warum|wie|wann|welche|who|what|where|why|how|when|which)/.test(h)
     );
-    if (wQuestions.length > 0) contentPts += 15;
-
-    if (/\w+ ist (ein|eine|der|die|das)\b/i.test(this.bodyText)) contentPts += 10;
-
+    C.definition = /\w+ ist (ein|eine|der|die|das)\b/i.test(this.bodyText);
     const numbers = this.bodyText.match(/\b\d+\b/g) ?? [];
-    if (numbers.length >= 3) contentPts += 5;
-
-    if (this.qa('ul, ol').length > 0) contentPts += 10;
-    if (this.q('table'))              contentPts += 10;
+    C.numbers    = numbers.length >= 3;
+    C.lists      = this.qa('ul, ol').length > 0;
+    C.table      = !!this.q('table');
 
     const firstPWords = (this.q('p')?.textContent ?? '').trim().split(/\s+/);
-    if (firstPWords.length > 0 && firstPWords.length < 50) contentPts += 5;
+    C.shortIntro = firstPWords.length > 0 && firstPWords.length < 50;
 
+    if (C.geoH1)      contentPts += 15;
+    if (C.geoH2)      contentPts += 10;
+    if (C.geoH3)      contentPts += 5;
+    if (C.mainTag)    contentPts += 10;
+    if (C.sectionTag) contentPts += 10;
+    if (C.asideTag)   contentPts += 5;
+    if (C.wQuestions) contentPts += 15;
+    if (C.definition) contentPts += 10;
+    if (C.numbers)    contentPts += 5;
+    if (C.lists)      contentPts += 10;
+    if (C.table)      contentPts += 10;
+    if (C.shortIntro) contentPts += 5;
     const contentScore = Math.min(100, (contentPts / 110) * 100);
 
-    // ── Kategorie 3: Entity & Authority (15%) ────────────────────────────────
+    // ── Entity & Authority ─────────────────────────────────────────────────
     let entityPts = 0;
 
-    if (/über uns|team|about us|about|unser team/.test(allLinks + text)) entityPts += 20;
-
+    C.aboutPage    = /über uns|team|about us|about|unser team/.test(allLinks + text);
     const hasSocialSchema = schemas.some(s =>
       Array.isArray(s?.sameAs) &&
       s.sameAs.some(link => /linkedin|facebook|instagram|twitter|xing/.test(link))
     );
     const hasSocialHtml = this.qa('a[href*="linkedin"], a[href*="facebook"], a[href*="instagram"]').length > 0;
-    if (hasSocialSchema || hasSocialHtml) entityPts += 20;
-
-    if (/zertifikat|auszeichnung|award|certified|preisträger|empfohlen von|partner von/i.test(this.bodyText)) entityPts += 15;
-
-    const hasWikiSameAs = schemas.some(s =>
+    C.socialLinks  = hasSocialHtml;
+    C.socialSchema = hasSocialSchema;
+    C.awards       = /zertifikat|auszeichnung|award|certified|preisträger|empfohlen von|partner von/i.test(this.bodyText);
+    C.wikiSameAs   = schemas.some(s =>
       Array.isArray(s?.sameAs) && s.sameAs.some(link => /wikipedia|wikidata/.test(link))
     );
-    if (hasWikiSameAs) entityPts += 10;
 
-    manualChecks += 2; // NAP-Konsistenz, Google Business
-
+    if (C.aboutPage)                    entityPts += 20;
+    if (hasSocialSchema || hasSocialHtml) entityPts += 20;
+    if (C.awards)                       entityPts += 15;
+    if (C.wikiSameAs)                   entityPts += 10;
+    manualChecks += 2;
     const entityScore = Math.min(100, (entityPts / 65) * 100);
 
-    // ── Kategorie 4: Zitierfähigkeit (10%) ───────────────────────────────────
+    // ── Zitierfähigkeit ────────────────────────────────────────────────────
     let citPts = 0;
 
-    if (/autor|author|von [A-ZÄÖÜ]/i.test(this.bodyText)) citPts += 20;
-
+    C.authorMention = /autor|author|von [A-ZÄÖÜ]/i.test(this.bodyText);
     const hasTimeTag    = this.q('time') != null;
     const hasDatePattern = /\b\d{1,2}\.\s*\w+\s*\d{4}\b|\d{4}-\d{2}-\d{2}/.test(this.bodyText);
-    if (hasTimeTag || hasDatePattern) citPts += 20;
-
-    if (/zuletzt aktualisiert|last updated|stand:|aktualisiert am/i.test(this.bodyText)) citPts += 15;
-    if (/[\w.-]+@[\w.-]+\.\w{2,}|\+\d[\d\s\-()]{6,}/.test(this.bodyText))               citPts += 15;
+    C.datePresent   = hasTimeTag || hasDatePattern;
+    C.timeTag       = hasTimeTag;
+    C.lastUpdated   = /zuletzt aktualisiert|last updated|stand:|aktualisiert am/i.test(this.bodyText);
+    C.contactInfo   = /[\w.-]+@[\w.-]+\.\w{2,}|\+\d[\d\s\-()]{6,}/.test(this.bodyText);
+    C.recentDate    = /202[4-6]/.test(this.html);
 
     try {
-      const host        = new URL(this.url).hostname;
-      const extLinks    = this.qa('a[href^="http"]').filter(a =>
+      const host     = new URL(this.url).hostname;
+      const extLinks = this.qa('a[href^="http"]').filter(a =>
         !(a.getAttribute('href') ?? '').includes(host)
       );
-      if (extLinks.length > 0) citPts += 15;
-    } catch { /* ignore */ }
+      C.extLinks = extLinks.length > 0;
+    } catch { C.extLinks = false; }
 
-    if (/202[4-6]/.test(this.html)) citPts += 15;
-
+    if (C.authorMention) citPts += 20;
+    if (C.datePresent)   citPts += 20;
+    if (C.lastUpdated)   citPts += 15;
+    if (C.contactInfo)   citPts += 15;
+    if (C.extLinks)      citPts += 15;
+    if (C.recentDate)    citPts += 15;
     const citScore = Math.min(100, (citPts / 100) * 100);
 
-    // ── Kategorie 5: Technische Crawlbarkeit (10%) ────────────────────────────
-    const techScore = this._calcTechPoints(ps, pathChecks);
+    // ── Technical Crawlability ────────────────────────────────────────────
+    const techResult = this._calcTech(ps, pathChecks);
+    const techScore  = techResult.score;
+    C.geoViewport   = techResult.checks.viewport;
+    C.geoCanonical  = techResult.checks.canonical;
+    C.geoOgFull     = techResult.checks.ogFull;
+    C.geoNoindex    = techResult.checks.noindex;
+    C.geoImgAlt     = techResult.checks.imgAlt;
+    C.geoRobotsTxt  = techResult.checks.robotsTxt;
+    C.geoSitemapXml = techResult.checks.sitemapXml;
+    C.geoLcpGood    = techResult.checks.lcpGood;
+    C.geoClsGood    = techResult.checks.clsGood;
 
-    // ── Gewichteter Gesamt-Score ─────────────────────────────────────────────
+    // ── Gesamt-Score (gewichtet) ───────────────────────────────────────────
     let geoScore = Math.round(
       structuredScore * 0.40 +
       contentScore    * 0.25 +
@@ -563,21 +615,16 @@ class PageAnalyzer {
       techScore       * 0.10
     );
 
-    // ── Bonus ────────────────────────────────────────────────────────────────
     let bonus = 0;
-
     const ytWithTitle = this.qa('iframe[src*="youtube"], iframe[src*="youtu.be"]')
       .filter(el => el.getAttribute('title'));
     if (ytWithTitle.length > 0 && /transkript|transcript|untertitel/i.test(this.bodyText)) bonus += 5;
-
     if (this.qa('link[rel="alternate"][hreflang]').length > 0) bonus += 2;
-
     const interactiveFrames = this.qa('canvas, iframe').filter(el => {
       const src = el.getAttribute('src') ?? '';
       return !src.includes('youtube') && !src.includes('vimeo');
     });
     if (interactiveFrames.length > 0) bonus += 3;
-
     geoScore = Math.min(110, geoScore + bonus);
 
     return {
@@ -591,6 +638,7 @@ class PageAnalyzer {
         citation:   Math.round(citScore),
         tech:       Math.round(techScore),
       },
+      checks: C,
     };
   }
 }
