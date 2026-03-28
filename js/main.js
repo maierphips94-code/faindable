@@ -40,6 +40,12 @@ function faindable() {
     formSubmitting: false,
     form: { name: '', email: '', website: '', message: '' },
 
+    // Report-Download
+    reportData: null,
+    reportModalOpen: false,
+    reportPassword: '',
+    reportPasswordError: false,
+
     // ── Init ─────────────────────────────────────────────────────────────────
     init() {
       this._setupScrollReveal();
@@ -136,6 +142,15 @@ function faindable() {
         this.currentScanStep = this.scanSteps.length - 1;
         this.scanProgress = 100;
         this.analyzedUrl = data.analyzed_url || this.url;
+        this.reportData = {
+          url:     data.analyzed_url || this.url,
+          date:    new Date().toLocaleDateString('de-DE'),
+          seo:     data.seo,
+          geo:     data.geo,
+          overall: data.overall,
+          seoData: data.seoData,
+          geoData: data.geoData,
+        };
         window.analysisRobot?.showComplete();
 
         await this._sleep(600);
@@ -179,6 +194,25 @@ function faindable() {
       this.currentScanStep = 0;
       this.scanProgress = 15;
       window.analysisRobot?._hardReset();
+      this.reportData = null;
+    },
+
+    // ── Report-Download ──────────────────────────────────────────────────────
+    openReportModal() {
+      this.reportPassword = '';
+      this.reportPasswordError = false;
+      this.reportModalOpen = true;
+    },
+
+    downloadReport() {
+      if (this.reportPassword !== 'faindable123') {
+        this.reportPasswordError = true;
+        return;
+      }
+      this.reportModalOpen = false;
+      this.reportPassword = '';
+      this.reportPasswordError = false;
+      window.generateFaindableReport(this.reportData);
     },
 
     // ── Score-Hints ──────────────────────────────────────────────────────────

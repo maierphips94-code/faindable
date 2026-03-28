@@ -194,6 +194,8 @@ async function analyzeUrl(rawUrl) {
     overall,
     manual_checks: seoResult.manualChecks + geoResult.manualChecks,
     analyzed_url: finalUrl,
+    seoData: seoResult,
+    geoData: geoResult,
   };
 }
 
@@ -389,7 +391,18 @@ class PageAnalyzer {
 
     seoScore = Math.min(110, seoScore + bonus);
 
-    return { score: seoScore, manualChecks, bonus };
+    return {
+      score: seoScore,
+      manualChecks,
+      bonus,
+      cats: {
+        eeat:   Math.round(eeatScore),
+        onPage: Math.round(onPageScore),
+        tech:   Math.round(techScore),
+        local:  Math.round(localScore),
+        user:   Math.round(userScore),
+      },
+    };
   }
 
   // ══════════════════════════════════════════════════════════ GEO ANALYSE ════
@@ -567,6 +580,17 @@ class PageAnalyzer {
 
     geoScore = Math.min(110, geoScore + bonus);
 
-    return { score: geoScore, manualChecks, bonus };
+    return {
+      score: geoScore,
+      manualChecks,
+      bonus,
+      cats: {
+        structured: Math.round(structuredScore),
+        content:    Math.round(contentScore),
+        entity:     Math.round(entityScore),
+        citation:   Math.round(citScore),
+        tech:       Math.round(techScore),
+      },
+    };
   }
 }
