@@ -333,178 +333,101 @@
       border-color: rgba(149,142,160,0.10);
     }
 
-    /* ── Analysis Robot ──────────────────────────────────────────────────── */
-    @keyframes robotEnter {
-      0%   { transform: translateX(70px); opacity: 0; }
-      65%  { transform: translateX(-8px); opacity: 1; }
-      82%  { transform: translateX(4px); }
-      100% { transform: translateX(0);   opacity: 1; }
+    /* ── Radar Scanner ───────────────────────────────────────────────────── */
+    @keyframes radarSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
     }
-    @keyframes robotExit {
-      0%   { transform: scale(1) translate(0,0);           opacity: 1; }
-      100% { transform: scale(0.88) translate(40px,18px);  opacity: 0; }
+    @keyframes radarBlip {
+      0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+      18%  { transform: translate(-50%,-50%) scale(1.5); opacity: 1; }
+      60%  { transform: translate(-50%,-50%) scale(1);   opacity: 0.55; }
+      100% { transform: translate(-50%,-50%) scale(0.7); opacity: 0; }
     }
-    @keyframes lensPulse {
-      0%, 100% { opacity: 0.45; }
-      50%      { opacity: 1; }
+    @keyframes radarPulse {
+      0%, 100% { opacity: 0.65; box-shadow: 0 0 8px rgba(208,188,255,.70), 0 0 18px rgba(208,188,255,.25); }
+      50%      { opacity: 1;    box-shadow: 0 0 12px rgba(208,188,255,.95), 0 0 28px rgba(208,188,255,.45); }
     }
-    @keyframes robotVibrate {
-      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
-      25%      { transform: rotateX(-15deg) rotateY(-25deg) translateY(-1px); }
-      75%      { transform: rotateX(-15deg) rotateY(-25deg) translateY(1px); }
-    }
-    @keyframes robotSway {
-      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg); }
-      50%      { transform: rotateX(-15deg) rotateY(-19deg); }
-    }
-    @keyframes robotProcess {
-      0%   { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
-      20%  { transform: rotateX(-16deg) rotateY(-28deg) translateY(-1px); }
-      40%  { transform: rotateX(-14deg) rotateY(-22deg) translateY(1px); }
-      60%  { transform: rotateX(-15deg) rotateY(-26deg) translateY(-1px); }
-      80%  { transform: rotateX(-15deg) rotateY(-24deg) translateY(0); }
-      100% { transform: rotateX(-15deg) rotateY(-25deg) translateY(0); }
-    }
-    @keyframes robotNod {
-      0%, 100% { transform: rotateX(-15deg) rotateY(-25deg); }
-      50%      { transform: rotateX(-22deg) rotateY(-25deg); }
-    }
-    @keyframes particleFly {
-      0%   { transform: translateX(0) translateY(0); opacity: 0; }
-      15%  { opacity: 1; }
-      100% { transform: translateX(80px) translateY(var(--end-y,0px)); opacity: 0; }
-    }
-    @keyframes dataFloat {
-      0%   { transform: translateY(0);     opacity: 0.55; }
-      100% { transform: translateY(-36px); opacity: 0; }
-    }
-    @keyframes beamPulse {
-      0%, 100% { opacity: 0.8; }
-      50%      { opacity: 1; }
+    @keyframes radarComplete {
+      0%   { box-shadow: 0 0 0 0 rgba(52,211,153,.5); }
+      70%  { box-shadow: 0 0 0 18px rgba(52,211,153,0); }
+      100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
     }
 
-    #analysis-robot {
+    #scan-radar {
+      width: 190px; height: 190px;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #0e1424 0%, #070c1a 100%);
+      border: 1px solid rgba(208,188,255,0.22);
+      box-shadow: 0 0 40px rgba(208,188,255,0.06), inset 0 0 50px rgba(0,0,0,0.45);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .radar-rings {
+      position: absolute; inset: 0; border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 20%, rgba(208,188,255,0.10) 20.6%, transparent 21.2%),
+        radial-gradient(circle at 50% 50%, transparent 39%, rgba(208,188,255,0.09) 39.6%, transparent 40.2%),
+        radial-gradient(circle at 50% 50%, transparent 58%, rgba(208,188,255,0.09) 58.6%, transparent 59.2%),
+        radial-gradient(circle at 50% 50%, transparent 78%, rgba(208,188,255,0.13) 78.6%, transparent 79.2%);
+      pointer-events: none;
+    }
+    .radar-cross {
       position: absolute; inset: 0;
-      display: none; /* shown by JS */
-      flex-direction: column; align-items: center; justify-content: center;
-      overflow: visible;
+      background:
+        linear-gradient(90deg, transparent 49.5%, rgba(208,188,255,0.07) 49.5%, rgba(208,188,255,0.07) 50.5%, transparent 50.5%),
+        linear-gradient(0deg,  transparent 49.5%, rgba(208,188,255,0.07) 49.5%, rgba(208,188,255,0.07) 50.5%, transparent 50.5%);
+      pointer-events: none;
     }
-    .robot-container { perspective: 700px; perspective-origin: 50% 40%; position: relative; }
-    .robot-3d {
-      transform-style: preserve-3d;
-      transform: rotateX(-15deg) rotateY(-25deg);
-      display: flex; flex-direction: column; align-items: center;
+    .radar-sweep {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        transparent 295deg,
+        rgba(208,188,255,0.03) 315deg,
+        rgba(208,188,255,0.16) 348deg,
+        rgba(173,198,255,0.50) 360deg
+      );
+      animation: radarSpin 3s linear infinite;
+      transform-origin: center;
     }
-    .antenna-stem {
-      width: 3px; height: 16px;
-      background: linear-gradient(180deg,#6b6880,#3d3a4e);
-      border-radius: 2px;
+    #scan-radar.radar-complete .radar-sweep {
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        transparent 295deg,
+        rgba(52,211,153,0.03) 315deg,
+        rgba(52,211,153,0.18) 348deg,
+        rgba(52,211,153,0.55) 360deg
+      );
     }
-    .antenna-led {
-      width: 9px; height: 9px; border-radius: 50%;
+    .radar-center {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 8px; height: 8px; border-radius: 50%;
       background: #d0bcff;
-      box-shadow: 0 0 8px rgba(208,188,255,0.65);
-      margin-top: -4px; position: relative; z-index: 1;
-      transition: background .4s, box-shadow .4s;
+      animation: radarPulse 2.2s ease-in-out infinite;
+      z-index: 10;
     }
-    .robot-topcap {
-      width: 84px; height: 10px;
-      background: linear-gradient(135deg,#3a4260,#272f47);
-      border-radius: 6px 6px 0 0;
-      border: 1px solid rgba(255,255,255,0.07); border-bottom: none;
-      box-shadow: 0 -4px 8px rgba(0,0,0,.30);
+    #scan-radar.radar-complete .radar-center {
+      background: #34d399;
+      animation: radarComplete 0.6s ease-out;
     }
-    .robot-mainbody {
-      width: 110px; height: 90px;
-      background: linear-gradient(145deg,#2d3449 0%,#1e2538 60%,#1a2035 100%);
-      border-radius: 14px 14px 10px 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      position: relative; overflow: hidden;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.07),
-        inset -3px 0 8px rgba(0,0,0,.25),
-        8px 14px 32px rgba(0,0,0,.65),
-        -2px -2px 8px rgba(0,0,0,.3);
+    .radar-blip {
+      position: absolute;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #adc6ff;
+      box-shadow: 0 0 6px rgba(173,198,255,0.85), 0 0 12px rgba(173,198,255,0.35);
+      animation: radarBlip 1.8s ease-out forwards;
+      pointer-events: none;
     }
-    .robot-mainbody::after {
-      content:''; position:absolute; inset:0; border-radius:inherit;
-      background: linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 50%);
-      pointer-events:none;
-    }
-    .robot-face {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 7px; padding: 16px;
-      width: 100%; height: 100%; box-sizing: border-box;
-      align-items: center; justify-items: center;
-    }
-    .lens {
-      border-radius: 50%; position: relative; flex-shrink: 0;
-      transition: box-shadow .4s, background .5s;
-    }
-    .lens::before {
-      content:''; position:absolute; top:18%; left:22%;
-      width:28%; height:28%;
-      background: rgba(255,255,255,.22); border-radius:50%; z-index:2;
-    }
-    .lens-sm {
-      width:30px; height:30px;
-      background: radial-gradient(circle at 35% 35%,#1a1f30 0%,#102456 60%,#0d3a8f 100%);
-      box-shadow: inset 0 0 8px rgba(5,102,217,.25), 0 0 6px rgba(5,102,217,.15);
-    }
-    .lens-main {
-      width:42px; height:42px;
-      background: radial-gradient(circle at 35% 35%,#1a1525 0%,#3d1f7a 55%,#7c3aed 100%);
-      box-shadow: inset 0 0 12px rgba(160,120,255,.30), 0 0 0 rgba(160,120,255,0);
-      transition: box-shadow .5s, background .5s;
-    }
-    .robot-legs { display:flex; gap:36px; margin-top:2px; }
-    .robot-leg {
-      width:14px; height:22px;
-      background: linear-gradient(180deg,#2a3046,#161c2e);
-      border-radius: 3px 3px 7px 7px;
-      border: 1px solid rgba(255,255,255,.05);
-      box-shadow: 3px 6px 10px rgba(0,0,0,.45);
-    }
-    .robot-ground-shadow {
-      width:110px; height:18px;
-      background: radial-gradient(ellipse,rgba(0,0,0,.50) 0%,transparent 70%);
-      margin-top:4px; pointer-events:none;
-    }
-    .robot-scan-beam {
-      position: absolute; top: 50%; right: 52%;
-      transform: translateY(-50%); margin-top:6px;
-      width: 110px; height: 55px;
-      background: linear-gradient(to right,transparent 0%,rgba(160,120,255,.07) 40%,rgba(160,120,255,.16) 100%);
-      clip-path: polygon(100% 25%,0% 0%,0% 100%,100% 75%);
-      opacity: 0; transition: opacity .6s ease; pointer-events:none;
-      animation: beamPulse 2s ease-in-out infinite;
-      animation-play-state: paused;
-    }
-    .robot-particle {
-      position: absolute; width:3px; height:3px;
-      border-radius:50%; pointer-events:none;
-    }
-    .robot-data-bit {
-      position:absolute; font-family:'Courier New',monospace;
-      font-size:9px; color:#958ea0; pointer-events:none; user-select:none;
-    }
-    .robot-checkmark-el {
-      position:absolute; top:-10px; left:50%;
-      transform: translateX(-50%) scale(0);
-      font-size:28px; color:#10b981;
-      text-shadow: 0 0 16px rgba(16,185,129,.6);
-      transition: transform .45s cubic-bezier(.34,1.56,.64,1);
-      pointer-events:none; z-index:10;
-    }
-    .robot-checkmark-el.visible { transform: translateX(-50%) scale(1); }
-
     @media (max-width:767px) {
-      #analysis-robot { transform: scale(0.75); transform-origin: center top; }
+      #scan-radar { width: 150px; height: 150px; }
     }
     @media (prefers-reduced-motion:reduce) {
-      .robot-3d,.lens,.antenna-led,.robot-scan-beam {
-        animation: none !important; transition: opacity .3s !important;
-      }
+      .radar-sweep, .radar-center { animation: none !important; }
     }
 
     /* ── Bento Grid Glow ──────────────────────────────────────────────────── */
@@ -645,46 +568,19 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="flex flex-col md:flex-row items-center gap-8 max-w-3xl mx-auto w-full">
+         class="flex flex-col items-center gap-7 max-w-md mx-auto w-full">
 
-      <!-- Robot slot (top on mobile, right on desktop) -->
-      <div class="flex-shrink-0 relative order-1 md:order-2"
-           style="width:220px; height:230px;">
-        <div id="analysis-robot" aria-hidden="true">
-          <!-- Scan beam -->
-          <div id="scan-beam" class="robot-scan-beam"></div>
-          <!-- 3D Robot -->
-          <div class="robot-container">
-            <div class="robot-3d" id="robot-body">
-              <div style="display:flex;flex-direction:column;align-items:center;">
-                <div class="antenna-stem"></div>
-                <div class="antenna-led" id="antenna-led"></div>
-              </div>
-              <div class="robot-topcap"></div>
-              <div class="robot-mainbody">
-                <div class="robot-face">
-                  <div class="lens lens-sm" id="lens-1"></div>
-                  <div class="lens lens-sm" id="lens-2"></div>
-                  <div class="lens lens-sm" id="lens-3"></div>
-                  <div class="lens lens-main" id="lens-main"></div>
-                </div>
-              </div>
-              <div class="robot-legs">
-                <div class="robot-leg"></div>
-                <div class="robot-leg"></div>
-              </div>
-            </div>
-          </div>
-          <div class="robot-ground-shadow"></div>
-          <!-- Overlays -->
-          <div id="particles"  style="position:absolute;inset:0;pointer-events:none;overflow:visible;"></div>
-          <div id="data-bits"  style="position:absolute;inset:0;pointer-events:none;overflow:visible;"></div>
-          <div id="robot-checkmark" class="robot-checkmark-el">✓</div>
-        </div>
+      <!-- Radar -->
+      <div id="scan-radar" aria-hidden="true">
+        <div class="radar-rings"></div>
+        <div class="radar-cross"></div>
+        <div class="radar-sweep"></div>
+        <div id="radar-blips" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:50%;"></div>
+        <div class="radar-center"></div>
       </div>
 
-      <!-- Progress info (bottom on mobile, left on desktop) -->
-      <div class="flex-1 w-full min-w-0 order-2 md:order-1">
+      <!-- Progress info -->
+      <div class="w-full">
         <!-- URL chip -->
         <p class="text-xs mb-5 truncate w-full px-4 py-2 rounded-lg"
            style="color:rgba(203,195,215,0.55);background:rgba(13,19,38,0.70);font-family:monospace;">
@@ -1344,9 +1240,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/analyzer.js"></script>
-<script src="js/robot.js"></script>
 <script src="js/report.js"></script>
 <script src="js/main.js"></script>
+<script>
+(function () {
+  let _interval = null;
+  window.scanRadar = {
+    start() {
+      const blips = document.getElementById('radar-blips');
+      const radar = document.getElementById('scan-radar');
+      if (!radar) return;
+      radar.classList.remove('radar-complete');
+      clearInterval(_interval);
+      _interval = setInterval(() => {
+        if (!blips) return;
+        const angle = Math.random() * Math.PI * 2;
+        const dist  = (0.18 + Math.random() * 0.65) * 50; // % of radius
+        const cx = 50 + Math.cos(angle) * dist;
+        const cy = 50 + Math.sin(angle) * dist;
+        const b = document.createElement('div');
+        b.className = 'radar-blip';
+        b.style.left = cx + '%';
+        b.style.top  = cy + '%';
+        blips.appendChild(b);
+        b.addEventListener('animationend', () => b.remove(), { once: true });
+      }, 380);
+    },
+    complete() {
+      clearInterval(_interval);
+      const radar = document.getElementById('scan-radar');
+      if (radar) radar.classList.add('radar-complete');
+    },
+    stop() {
+      clearInterval(_interval);
+      const blips = document.getElementById('radar-blips');
+      if (blips) blips.innerHTML = '';
+      const radar = document.getElementById('scan-radar');
+      if (radar) radar.classList.remove('radar-complete');
+    }
+  };
+})();
+</script>
 
 <!-- Interactive dot grid -->
 <script>

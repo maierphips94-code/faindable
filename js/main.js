@@ -101,14 +101,12 @@ function faindable() {
       this.currentScanStep = 0;
       this.scanProgress = this.scanSteps[0].progress;
 
-      // Roboter starten (kurze DOM-Settle-Pause)
+      // Radar starten
       await this._sleep(60);
-      window.analysisRobot?.enter();
-      window.analysisRobot?.startConnecting();
+      window.scanRadar?.start();
 
-      // Per-Step-Delays (ms): wie lange bleibt jeder Schritt aktiv bevor der nächste kommt
-      // SEO (Index 2) und GEO (Index 3) dauern am längsten
-      const stepDelays = [450, 500, 2100, 2200];
+      // Per-Step-Delays (ms): Connect/Crawl kurz, SEO/GEO am längsten
+      const stepDelays = [350, 400, 2400, 2600];
 
       let stepIndex = 0;
 
@@ -119,9 +117,6 @@ function faindable() {
             stepIndex = idx + 1;
             this.currentScanStep = stepIndex;
             this.scanProgress = this.scanSteps[stepIndex].progress;
-            // Roboter-Phasen an Schritt koppeln
-            if (stepIndex === 1) window.analysisRobot?.startScanning();
-            if (stepIndex === 3) window.analysisRobot?.startProcessing();
             if (idx + 1 < stepDelays.length) advance(idx + 1);
             else resolve();
           }, stepDelays[idx]);
@@ -151,10 +146,10 @@ function faindable() {
           seoData: data.seoData,
           geoData: data.geoData,
         };
-        window.analysisRobot?.showComplete();
+        window.scanRadar?.complete();
 
         await this._sleep(600);
-        window.analysisRobot?.exit();   // Roboter verlässt die Bühne
+        window.scanRadar?.stop();
         this.heroState = 'result';
 
         // Score-Animationen gestaffelt
@@ -193,7 +188,7 @@ function faindable() {
       this.analyzedUrl = '';
       this.currentScanStep = 0;
       this.scanProgress = 15;
-      window.analysisRobot?._hardReset();
+      window.scanRadar?.stop();
       this.reportData = null;
     },
 
