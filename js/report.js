@@ -36,29 +36,34 @@ const SEO_SUGGESTIONS = {
 
 const GEO_SUGGESTIONS = {
   structured: [
-    'Implementiere Organization- oder LocalBusiness-Schema mit Name, Beschreibung, Adresse und Logo. Kein Schema.org-Markup gefunden.',
-    'Füge FAQPage-Schema mit mindestens zwei Fragen hinzu — das verbessert die Sichtbarkeit in KI-Antworten direkt.',
-    'Ergänze AggregateRating-Schema für Social Proof und verknüpfe Social-Media-Profile per sameAs.',
+    'Implementiere Organization-Schema mit allen 12 Pflichtfeldern (Name, Beschreibung, Adresse, Telefon, E-Mail, Logo, Bild, Geo, Öffnungszeiten, sameAs, URL, Preisklasse). Kein Schema.org-Markup gefunden.',
+    'Füge FAQPage-Schema mit mindestens 3 W-Fragen hinzu und stelle sicher, dass Antworten mind. 50 Wörter haben und auch als sichtbarer HTML-Text erscheinen.',
+    'Ergänze HowTo-Schema für Dienstleistungsseiten und vervollständige AggregateRating mit mind. 5 Bewertungen.',
   ],
   content: [
-    'Strukturiere Inhalte mit W-Fragen als Überschriften (Wer, Was, Warum, Wie, Wann). KI-Systeme bevorzugen direkte Antworten.',
-    'Füge Listen, Tabellen und präzise Definitionen im ersten Absatz hinzu. Konkretes Zahlenmaterial stärkt Autorität.',
-    'Erweitere mit semantischen Schlüsselbegriffen, die KI-Systeme für die Einordnung deiner Inhalte nutzen.',
+    'Strukturiere Inhalte mit W-Fragen als Überschriften. Füge einen TL;DR-Block am Seitenanfang hinzu. KI-Systeme bevorzugen direkte, scannbare Antworten.',
+    'Ergänze zitierbare Statistiken mit Quellenangabe ("Laut Studie X..."). Hebe Kernaussagen mit <strong> oder <blockquote> hervor.',
+    'Baue Vergleichsinhalte und interne Verlinkung zu Unterthemen aus. Breadcrumb-Navigation stärkt die topische Autorität.',
   ],
   entity: [
-    'Verknüpfe Social-Media-Profile via sameAs in Schema.org und füge eine vollständige About/Über-uns-Seite hinzu.',
-    'Ergänze Auszeichnungen, Zertifikate und Partnerlogos. Das stärkt deine digitale Identität.',
-    'Verweise auf Wikipedia- oder Wikidata-Einträge als sameAs-Link für maximale Entity-Stärke.',
+    'Verknüpfe Social-Media-Profile via sameAs in Schema.org, füge Telefon- und E-Mail-Link hinzu und erstelle eine vollständige Über-uns-Seite mit Team-Fotos.',
+    'Dokumentiere Methodik und Referenzprojekte — das sind starke Zitier-Signale für Claude und ChatGPT.',
+    'Verlinke auf Google Business Profile in sameAs und ergänze Einträge in Branchenverzeichnissen (Gelbe Seiten, Yelp etc.).',
   ],
   citation: [
-    'Füge Autorenangaben, Veröffentlichungsdatum und Kontaktinformationen hinzu.',
-    'Aktualisiere Inhalte regelmäßig und kennzeichne Updates mit dem time-HTML-Tag.',
-    'Verlinke auf externe Quellen und Studien — KI-Systeme werten externe Referenzen stark.',
+    'Füge Autorenangaben mit Expertenbeschreibung, Publikationsdatum und Kontaktinformationen auf jeder Seite hinzu.',
+    'Verlinke auf externe Quellen für Fakten und Zahlen. Füge ein "Zuletzt aktualisiert"-Datum mit HTML <time>-Tag hinzu.',
+    'Ergänze eigene Studiendaten oder Umfrageergebnisse — Originalquellen werden von Perplexity bevorzugt zitiert.',
   ],
   tech: [
-    'Implementiere Viewport-Meta-Tag, Canonical-URL und Open-Graph-Tags. robots.txt und sitemap.xml fehlen.',
-    'Erstelle sitemap.xml und stelle sicher, dass Inhalte ohne JavaScript indexierbar sind.',
-    'Stelle sicher, dass Hauptinhalte im serverseitig gerenderten HTML stehen und keine noindex-Direktiven gesetzt sind.',
+    'Stelle sicher, dass HTTPS aktiv ist, robots.txt und sitemap.xml erreichbar sind und alle Seiten einen Viewport-Meta-Tag haben.',
+    'Vervollständige Open-Graph-Tags (og:title, og:description, og:image) und setze Canonical-URLs auf allen Seiten.',
+    'Stelle sicher, dass über 80% aller Bilder Alt-Texte haben und keine noindex-Direktiven gesetzt sind.',
+  ],
+  llm: [
+    'Integriere How-To-Strukturen mit Schritt-für-Schritt-Anleitungen (ChatGPT), hebe Kernaussagen mit <strong>/<blockquote> hervor (Perplexity) und dokumentiere deinen Arbeitsprozess (Claude).',
+    'Füge "Laut unserer Analyse..."-Formulierungen hinzu, erstelle mindestens ein Fallbeispiel mit messbarem Ergebnis und achte auf sachlichen, professionellen Ton.',
+    'Ergänze Region/Marke in der H1-Überschrift für lokale Sichtbarkeit und stelle sicher, dass das Format scannbar ist (viele H2s + Listen).',
   ],
 };
 
@@ -125,15 +130,74 @@ window.generateFaindableReport = function(data) {
     }
   };
 
-  // Renders wrapped text line by line; returns new y position
-  const drawWrappedText = (txt, x, startY, maxW, fontSize, color, italic) => {
-    doc.setFontSize(fontSize);
-    doc.setTextColor(...color);
-    doc.setFont('helvetica', italic ? 'italic' : 'normal');
-    const lines = doc.splitTextToSize(txt, maxW);
-    const lh = fontSize * 0.45;
-    lines.forEach((line, i) => doc.text(line, x, startY + i * lh));
-    return startY + lines.length * lh;
+  const drawCheckItem = (label, passed, indent) => {
+    checkY(5);
+    const ix = ML + (indent ? 6 : 2);
+    const dotColor = passed ? [34, 197, 94] : [239, 68, 68];
+    doc.setFillColor(...dotColor);
+    doc.circle(ix, y - 0.8, 1.1, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...(passed ? [40, 100, 60] : [150, 50, 50]));
+    doc.text(label, ix + 3.5, y);
+    y += 4;
+  };
+
+  const drawCategoryBlock = (name, weight, score, checkItems, suggestion) => {
+    const estimatedHeight = 14 + checkItems.length * 4 + 16;
+    checkY(estimatedHeight);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C_TEXT);
+    doc.text(name, ML + 2, y + 4);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C_MUTED);
+    doc.text(weight, ML + 2, y + 9);
+
+    const lightBadge = _scoreColor(score).map(v => Math.round(v * 0.12 + 255 * 0.88));
+    doc.setFillColor(...lightBadge);
+    doc.roundedRect(PW - MR - 20, y, 20, 10, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
+    doc.setTextColor(..._scoreColor(score));
+    doc.text(`${score}`, PW - MR - 10, y + 6.5, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C_MUTED);
+    doc.text(_scoreLabel(score), PW - MR - 10, y + 9.5, { align: 'center' });
+
+    y += 12;
+    drawBar(ML, y, CW - 24, 4, score);
+    y += 7;
+
+    checkItems.forEach(item => {
+      if (item.value === null) return;
+      drawCheckItem(item.label, item.value, item.indent ?? false);
+    });
+
+    y += 2;
+
+    // Suggestion mit garantiertem Zeilenumbruch
+    const sugFontSize = 7.5;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(sugFontSize);
+    const sugText = 'Verbesserung: ' + suggestion;
+    const sugX = ML + 2;
+    const maxSugW = PW - MR - sugX - 4;
+    const lines = doc.splitTextToSize(sugText, maxSugW);
+    const lh = sugFontSize * 0.52;
+    const sugBlockH = lines.length * lh + 8;
+    checkY(sugBlockH);
+    doc.setTextColor(...C_MUTED);
+    lines.forEach((line, i) => doc.text(line, sugX, y + i * lh));
+    y += sugBlockH;
+
+    doc.setDrawColor(...C_BORDER);
+    doc.setLineWidth(0.2);
+    doc.line(ML, y, PW - MR, y);
+    y += 5;
   };
 
   // ── Seite 1: Header ───────────────────────────────────────────────────────
@@ -218,84 +282,6 @@ window.generateFaindableReport = function(data) {
   doc.line(ML, y, PW - MR, y);
   y += 8;
 
-  // ── Kategorie-Block renderer ──────────────────────────────────────────────
-
-  const drawCheckItem = (label, passed, indent) => {
-    checkY(5);
-    const ix = ML + (indent ? 6 : 2);
-    const dotColor = passed ? [34, 197, 94] : [239, 68, 68];
-    doc.setFillColor(...dotColor);
-    doc.circle(ix, y - 0.8, 1.1, 'F');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(...(passed ? [40, 100, 60] : [150, 50, 50]));
-    doc.text(label, ix + 3.5, y);
-    y += 4;
-  };
-
-  const drawCategoryBlock = (name, weight, score, checkItems, suggestion) => {
-    const estimatedHeight = 14 + checkItems.length * 4 + 16;
-    checkY(estimatedHeight);
-
-    // Name row
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8.5);
-    doc.setTextColor(...C_TEXT);
-    doc.text(name, ML + 2, y + 4);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
-    doc.setTextColor(...C_MUTED);
-    doc.text(weight, ML + 2, y + 9);
-
-    // Score badge
-    const lightBadge = _scoreColor(score).map(v => Math.round(v * 0.12 + 255 * 0.88));
-    doc.setFillColor(...lightBadge);
-    doc.roundedRect(PW - MR - 20, y, 20, 10, 2, 2, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9.5);
-    doc.setTextColor(..._scoreColor(score));
-    doc.text(`${score}`, PW - MR - 10, y + 6.5, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.5);
-    doc.setTextColor(...C_MUTED);
-    doc.text(_scoreLabel(score), PW - MR - 10, y + 9.5, { align: 'center' });
-
-    y += 12;
-
-    // Progress bar
-    drawBar(ML, y, CW - 24, 4, score);
-    y += 7;
-
-    // Individual checks
-    checkItems.forEach(item => {
-      if (item.value === null) return; // skip unmeasured
-      drawCheckItem(item.label, item.value, item.indent ?? false);
-    });
-
-    y += 2;
-
-    // Suggestion
-    const sugFontSize = 7.5;
-    doc.setFont('helvetica', 'italic');
-    doc.setFontSize(sugFontSize);
-    const sugText = 'Verbesserung: ' + suggestion;
-    const sugX = ML + 2;
-    const maxSugW = PW - MR - sugX - 4;  // guaranteed safe right margin
-    const lines = doc.splitTextToSize(sugText, maxSugW);
-    const lh = sugFontSize * 0.52;
-    const sugBlockH = lines.length * lh + 8;
-    checkY(sugBlockH);
-    doc.setTextColor(...C_MUTED);
-    lines.forEach((line, i) => doc.text(line, sugX, y + i * lh));
-    y += sugBlockH;
-
-    // Divider
-    doc.setDrawColor(...C_BORDER);
-    doc.setLineWidth(0.2);
-    doc.line(ML, y, PW - MR, y);
-    y += 5;
-  };
-
   // ── SEO-Sektion ───────────────────────────────────────────────────────────
   checkY(16);
   doc.setFillColor(...C_SEO_BG);
@@ -320,42 +306,42 @@ window.generateFaindableReport = function(data) {
   ], _suggest(SEO_SUGGESTIONS.eeat, sc.eeat ?? 0));
 
   drawCategoryBlock('On-Page & Semantik', 'Gewichtung 25 %', sc.onPage ?? 0, [
-    { label: 'Seitentitel vorhanden',                   value: sx.titleExists    ?? null },
-    { label: 'Titel-Länge optimal (50–60 Zeichen)',     value: sx.titleLen       ?? null },
-    { label: 'Meta-Description vorhanden',              value: sx.metaDescExists ?? null },
-    { label: 'Meta-Description optimal (130–160 Zeichen)', value: sx.metaDescLen ?? null },
-    { label: 'Genau ein H1-Tag',                        value: sx.h1Single       ?? null },
-    { label: 'Mindestens zwei H2-Tags',                 value: sx.h2Multiple     ?? null },
-    { label: 'H3-Tags vorhanden',                       value: sx.h3Present      ?? null },
-    { label: 'Interne Verlinkung ausreichend (> 3)',     value: sx.intLinks       ?? null },
-    { label: 'Anchor-Texte qualitativ (keine "hier"-Links)', value: sx.anchorQuality ?? null },
-    { label: 'Favicon eingebunden',                     value: sx.favicon        ?? null },
+    { label: 'Seitentitel vorhanden',                       value: sx.titleExists    ?? null },
+    { label: 'Titel-Länge optimal (50–60 Zeichen)',         value: sx.titleLen       ?? null },
+    { label: 'Meta-Description vorhanden',                  value: sx.metaDescExists ?? null },
+    { label: 'Meta-Description optimal (130–160 Zeichen)',  value: sx.metaDescLen    ?? null },
+    { label: 'Genau ein H1-Tag',                            value: sx.h1Single       ?? null },
+    { label: 'Mindestens zwei H2-Tags',                     value: sx.h2Multiple     ?? null },
+    { label: 'H3-Tags vorhanden',                           value: sx.h3Present      ?? null },
+    { label: 'Interne Verlinkung ausreichend (> 3)',         value: sx.intLinks       ?? null },
+    { label: 'Anchor-Texte qualitativ',                     value: sx.anchorQuality  ?? null },
+    { label: 'Favicon eingebunden',                         value: sx.favicon        ?? null },
   ], _suggest(SEO_SUGGESTIONS.onPage, sc.onPage ?? 0));
 
   drawCategoryBlock('Technical SEO', 'Gewichtung 20 %', sc.tech ?? 0, [
-    { label: 'Viewport-Meta-Tag',                        value: sx.viewport   ?? null },
-    { label: 'Canonical-URL',                            value: sx.canonical  ?? null },
-    { label: 'Open Graph Tags vollständig (Titel/Desc/Bild)', value: sx.ogFull ?? null },
-    { label: 'Keine noindex-Direktive',                  value: sx.noindex    ?? null },
-    { label: 'Bilder mit Alt-Texten (> 80 %)',           value: sx.imgAlt     ?? null },
-    { label: 'robots.txt erreichbar',                    value: sx.robotsTxt  ?? null },
-    { label: 'sitemap.xml erreichbar',                   value: sx.sitemapXml ?? null },
-    { label: 'LCP < 2,5 s (Core Web Vitals)',            value: sx.lcpGood    ?? null },
-    { label: 'CLS < 0,1 (Core Web Vitals)',              value: sx.clsGood    ?? null },
-    { label: 'INP / TBT < 200 ms (Core Web Vitals)',     value: sx.inpGood    ?? null },
+    { label: 'Viewport-Meta-Tag',                    value: sx.viewport   ?? null },
+    { label: 'Canonical-URL',                        value: sx.canonical  ?? null },
+    { label: 'Open Graph Tags vollständig',          value: sx.ogFull     ?? null },
+    { label: 'Keine noindex-Direktive',              value: sx.noindex    ?? null },
+    { label: 'Bilder mit Alt-Texten (> 80 %)',       value: sx.imgAlt     ?? null },
+    { label: 'robots.txt erreichbar',                value: sx.robotsTxt  ?? null },
+    { label: 'sitemap.xml erreichbar',               value: sx.sitemapXml ?? null },
+    { label: 'LCP < 2,5 s (Core Web Vitals)',        value: sx.lcpGood    ?? null },
+    { label: 'CLS < 0,1 (Core Web Vitals)',          value: sx.clsGood    ?? null },
+    { label: 'INP / TBT < 200 ms (Core Web Vitals)', value: sx.inpGood   ?? null },
   ], _suggest(SEO_SUGGESTIONS.tech, sc.tech ?? 0));
 
   drawCategoryBlock('Lokales SEO', 'Gewichtung 10 %', sc.local ?? 0, [
-    { label: 'LocalBusiness / Organization Schema vorhanden', value: sx.localSchema ?? null },
-    { label: 'Telefonnummer im Seitentext',                   value: sx.phone       ?? null },
-    { label: 'Adresse im Seitentext',                         value: sx.address     ?? null },
+    { label: 'LocalBusiness / Organization Schema', value: sx.localSchema ?? null },
+    { label: 'Telefonnummer im Seitentext',         value: sx.phone       ?? null },
+    { label: 'Adresse im Seitentext',               value: sx.address     ?? null },
   ], _suggest(SEO_SUGGESTIONS.local, sc.local ?? 0));
 
   drawCategoryBlock('User Signals', 'Gewichtung 10 %', sc.user ?? 0, [
-    { label: 'Keine aufdringlichen Overlays ohne ARIA',  value: sx.noOverlays ?? null },
-    { label: 'Bilder vorhanden',                         value: sx.hasImages  ?? null },
-    { label: 'Video eingebunden (YouTube / Vimeo)',       value: sx.hasVideo   ?? null },
-    { label: 'Ausreichend Textinhalt (> 300 Wörter)',     value: sx.contentLen ?? null },
+    { label: 'Keine aufdringlichen Overlays',        value: sx.noOverlays ?? null },
+    { label: 'Bilder vorhanden',                     value: sx.hasImages  ?? null },
+    { label: 'Video eingebunden (YouTube / Vimeo)',  value: sx.hasVideo   ?? null },
+    { label: 'Ausreichend Textinhalt (> 300 Wörter)', value: sx.contentLen ?? null },
   ], _suggest(SEO_SUGGESTIONS.user, sc.user ?? 0));
 
   y += 4;
@@ -374,65 +360,107 @@ window.generateFaindableReport = function(data) {
 
   const gc = data.geoData?.cats ?? {};
   const gx = data.geoData?.checks ?? {};
+  const gr = data.geoData?.raw ?? {};
 
-  drawCategoryBlock('Structured Data / Schema.org', 'Gewichtung 40 %', gc.structured ?? 0, [
-    { label: 'Organization / LocalBusiness Schema',          value: gx.orgSchema     ?? null },
-    { label: '— Name definiert',                             value: gx.orgName       ?? null, indent: true },
-    { label: '— Beschreibung definiert',                     value: gx.orgDesc       ?? null, indent: true },
-    { label: '— Adresse angegeben',                          value: gx.orgAddress    ?? null, indent: true },
-    { label: '— Telefon angegeben',                          value: gx.orgPhone      ?? null, indent: true },
-    { label: '— Logo hinterlegt',                            value: gx.orgLogo       ?? null, indent: true },
-    { label: '— sameAs-Links (Social Media)',                value: gx.orgSameAs     ?? null, indent: true },
-    { label: '— Öffnungszeiten / Geodaten',                  value: gx.orgHours || gx.orgGeo ? true : (gx.orgSchema ? false : null), indent: true },
-    { label: 'FAQPage Schema',                               value: gx.faqSchema     ?? null },
-    { label: '— Mindestens 2 FAQ-Einträge',                  value: gx.faqItems      ?? null, indent: true },
-    { label: 'Service / Product Schema',                     value: gx.serviceSchema ?? null },
-    { label: 'Article / BlogPosting Schema',                 value: gx.articleSchema ?? null },
-    { label: 'AggregateRating Schema',                       value: gx.ratingSchema  ?? null },
+  // K1: Structured Data
+  drawCategoryBlock('Structured Data / Schema.org', 'Gewichtung 35 % · ' + (gr.k1 ?? 0) + '/35 Punkte', gc.structured ?? 0, [
+    { label: 'Organization / LocalBusiness Schema',     value: gx.orgSchema     ?? null },
+    { label: '— Name',                                  value: gx.orgName       ?? null, indent: true },
+    { label: '— Beschreibung',                          value: gx.orgDesc       ?? null, indent: true },
+    { label: '— Adresse',                               value: gx.orgAddress    ?? null, indent: true },
+    { label: '— Telefon',                               value: gx.orgPhone      ?? null, indent: true },
+    { label: '— E-Mail',                                value: gx.orgEmail      ?? null, indent: true },
+    { label: '— Logo',                                  value: gx.orgLogo       ?? null, indent: true },
+    { label: '— Bild (image)',                          value: gx.orgImage      ?? null, indent: true },
+    { label: '— Geo-Koordinaten',                       value: gx.orgGeo        ?? null, indent: true },
+    { label: '— Öffnungszeiten',                        value: gx.orgHours      ?? null, indent: true },
+    { label: '— sameAs (mind. 2 Links)',                value: gx.orgSameAs     ?? null, indent: true },
+    { label: '— URL & Preisklasse',                     value: (gx.orgUrl && gx.orgPriceRange) ?? null, indent: true },
+    { label: 'FAQPage Schema',                          value: gx.faqSchema     ?? null },
+    { label: '— Mind. 3 FAQ-Einträge',                  value: gx.faqItems3     ?? null, indent: true },
+    { label: '— Antworten mind. 50 Wörter',             value: gx.faqLongAnswers ?? null, indent: true },
+    { label: '— W-Fragen als FAQ',                      value: gx.faqWQuestions ?? null, indent: true },
+    { label: '— FAQ auch als sichtbarer HTML-Text',     value: gx.faqVisibleText ?? null, indent: true },
+    { label: 'Service / Product Schema',                value: gx.serviceSchema ?? null },
+    { label: 'HowTo Schema',                            value: gx.howToSchema   ?? null },
+    { label: 'Article / BlogPosting Schema',            value: gx.articleSchema ?? null },
+    { label: 'AggregateRating (mind. 5 Bewertungen)',   value: gx.ratingFull    ?? null },
   ], _suggest(GEO_SUGGESTIONS.structured, gc.structured ?? 0));
 
-  drawCategoryBlock('Content-Struktur', 'Gewichtung 25 %', gc.content ?? 0, [
-    { label: 'Genau ein H1-Tag',                        value: gx.geoH1      ?? null },
-    { label: 'Mehrere H2-Tags (≥ 2)',                   value: gx.geoH2      ?? null },
-    { label: 'H3-Tags vorhanden',                       value: gx.geoH3      ?? null },
-    { label: 'Semantisches <main>-Element',             value: gx.mainTag    ?? null },
-    { label: 'Article / Section-Elemente',              value: gx.sectionTag ?? null },
-    { label: 'W-Fragen als Überschriften',              value: gx.wQuestions ?? null },
-    { label: 'Definitionen im Text (ist ein/eine/der)', value: gx.definition ?? null },
-    { label: 'Konkrete Zahlen vorhanden (≥ 3)',         value: gx.numbers    ?? null },
-    { label: 'Listen (ul/ol) vorhanden',                value: gx.lists      ?? null },
-    { label: 'Tabellen vorhanden',                      value: gx.table      ?? null },
+  // K2: Content-Struktur
+  drawCategoryBlock('Content-Struktur für LLM-Parsing', 'Gewichtung 22 % · ' + (gr.k2 ?? 0) + '/22 Punkte', gc.content ?? 0, [
+    { label: 'Genau ein H1-Tag',                          value: gx.geoH1         ?? null },
+    { label: 'Mindestens zwei H2-Tags',                   value: gx.geoH2         ?? null },
+    { label: 'H3-Tags vorhanden',                         value: gx.geoH3         ?? null },
+    { label: 'Semantisches <main> oder <article>-Element', value: gx.mainTag || gx.sectionTag ? true : (gx.geoH1 != null ? false : null) },
+    { label: 'W-Fragen als Überschriften (mind. 2)',       value: gx.wQuestions    ?? null },
+    { label: 'Definition-Pattern ("X ist ein/eine...")',   value: gx.definition    ?? null },
+    { label: 'Konversationelle Überschriften (Frageform)', value: gx.convoHeadings ?? null },
+    { label: 'TL;DR / Summary-Block vorhanden',           value: gx.tldr          ?? null },
+    { label: 'Zitierbare Statistiken mit Quellenangabe',  value: gx.quotableStats ?? null },
+    { label: 'Hervorgehobene Schlüsselaussagen',          value: gx.highlighted   ?? null },
+    { label: 'Interne Verlinkung (mind. 2)',              value: gx.internalLinks2 ?? null },
+    { label: 'Vergleichsinhalt vorhanden',                value: gx.hasComparison ?? null },
+    { label: 'Breadcrumb-Navigation',                     value: gx.breadcrumb    ?? null },
+    { label: 'Ratgeber / Guide erkennbar',                value: gx.hasGuide      ?? null },
+    { label: 'Listen (ul/ol) vorhanden',                  value: gx.lists         ?? null },
+    { label: 'Tabellen vorhanden',                        value: gx.table         ?? null },
   ], _suggest(GEO_SUGGESTIONS.content, gc.content ?? 0));
 
-  drawCategoryBlock('Entity & Authority', 'Gewichtung 15 %', gc.entity ?? 0, [
-    { label: 'About / Team-Seite verlinkt',             value: gx.aboutPage    ?? null },
-    { label: 'Social-Media-Links im HTML',              value: gx.socialLinks  ?? null },
-    { label: 'Social-Links in Schema.org sameAs',       value: gx.socialSchema ?? null },
-    { label: 'Auszeichnungen / Zertifikate erwähnt',    value: gx.awards       ?? null },
-    { label: 'Wikipedia / Wikidata in sameAs',          value: gx.wikiSameAs   ?? null },
+  // K3: Entity & Authority
+  drawCategoryBlock('Entity & Authority Signals', 'Gewichtung 15 % · ' + (gr.k3 ?? 0) + '/15 Punkte', gc.entity ?? 0, [
+    { label: 'Über-uns / Team-Seite verlinkt',              value: gx.aboutPage    ?? null },
+    { label: 'Autor-Schema mit LinkedIn-Link',              value: gx.authorSchema ?? null },
+    { label: 'Zertifikate / Auszeichnungen erwähnt',        value: gx.certificates ?? null },
+    { label: 'Case Study / Referenz vorhanden',             value: gx.caseStudy    ?? null },
+    { label: 'Methodology / "So arbeiten wir" dokumentiert', value: gx.methodology ?? null },
+    { label: 'Telefon-Link (tel:) vorhanden',               value: gx.napTel       ?? null },
+    { label: 'E-Mail-Link (mailto:) vorhanden',             value: gx.napEmail     ?? null },
+    { label: 'Adresse im HTML (itemprop oder Schema)',       value: gx.napAddress   ?? null },
+    { label: 'sameAs-Links in Schema (mind. 2)',            value: gx.napSameAs    ?? null },
+    { label: 'Google Business Profile in sameAs',           value: gx.gbpLink      ?? null },
+    { label: 'Wikipedia-Link in sameAs',                    value: gx.wikipedia    ?? null },
+    { label: 'Wikidata-Link in sameAs',                     value: gx.wikidata     ?? null },
+    { label: 'Branchenverzeichnis in sameAs',               value: gx.directoryLink ?? null },
   ], _suggest(GEO_SUGGESTIONS.entity, gc.entity ?? 0));
 
-  drawCategoryBlock('Zitierfähigkeit', 'Gewichtung 10 %', gc.citation ?? 0, [
-    { label: 'Autorenangaben vorhanden',                value: gx.authorMention ?? null },
-    { label: 'Datum / Zeitstempel vorhanden',           value: gx.datePresent   ?? null },
-    { label: 'HTML <time>-Tag genutzt',                 value: gx.timeTag       ?? null },
-    { label: '"Zuletzt aktualisiert"-Hinweis',          value: gx.lastUpdated   ?? null },
-    { label: 'Kontaktinformation (E-Mail / Telefon)',   value: gx.contactInfo   ?? null },
-    { label: 'Externe Quellen verlinkt',                value: gx.extLinks      ?? null },
-    { label: 'Aktuelles Jahr im Inhalt (2024–2026)',    value: gx.recentDate    ?? null },
+  // K4: Zitierfähigkeit
+  drawCategoryBlock('Zitierfähigkeit & Quellenqualität', 'Gewichtung 10 % · ' + (gr.k4 ?? 0) + '/10 Punkte', gc.citation ?? 0, [
+    { label: 'Autorenangabe vorhanden',                   value: gx.authorVisible  ?? null },
+    { label: 'Autorenbiografie mit Expertise-Nachweis',   value: gx.authorBio      ?? null },
+    { label: 'Externe Quellenlinks (mind. 2)',             value: gx.sourcedFacts   ?? null },
+    { label: 'Statistiken mit Quellenangabe',              value: gx.statsWithSource ?? null },
+    { label: 'Eigene Studie / Originaldaten erwähnt',      value: gx.originalData   ?? null },
+    { label: '<time>-Tag mit Datum',                       value: gx.timeTag        ?? null },
+    { label: '"Zuletzt aktualisiert"-Hinweis',             value: gx.lastUpdated    ?? null },
+    { label: 'Aktuelles Jahr im Inhalt',                   value: gx.recentYear     ?? null },
   ], _suggest(GEO_SUGGESTIONS.citation, gc.citation ?? 0));
 
-  drawCategoryBlock('Technische Crawlbarkeit', 'Gewichtung 10 %', gc.tech ?? 0, [
-    { label: 'Viewport-Meta-Tag',                             value: gx.geoViewport   ?? null },
-    { label: 'Canonical-URL',                                 value: gx.geoCanonical  ?? null },
-    { label: 'Open Graph Tags vollständig',                   value: gx.geoOgFull     ?? null },
-    { label: 'Keine noindex-Direktive',                       value: gx.geoNoindex    ?? null },
-    { label: 'Bilder mit Alt-Texten (> 80 %)',                value: gx.geoImgAlt     ?? null },
-    { label: 'robots.txt erreichbar',                         value: gx.geoRobotsTxt  ?? null },
-    { label: 'sitemap.xml erreichbar',                        value: gx.geoSitemapXml ?? null },
-    { label: 'LCP < 2,5 s',                                   value: gx.geoLcpGood    ?? null },
-    { label: 'CLS < 0,1',                                     value: gx.geoClsGood    ?? null },
+  // K5: Technische Crawlbarkeit
+  drawCategoryBlock('Technische Crawlbarkeit', 'Gewichtung 8 % · ' + (gr.k5 ?? 0) + '/8 Punkte', gc.tech ?? 0, [
+    { label: 'HTTPS aktiv',                          value: gx.geoHttps    ?? null },
+    { label: 'Viewport-Meta-Tag',                    value: gx.geoViewport ?? null },
+    { label: 'robots.txt erreichbar',                value: gx.geoRobots   ?? null },
+    { label: 'sitemap.xml erreichbar',               value: gx.geoSitemap  ?? null },
+    { label: 'Open Graph Tags (og:title + og:desc)', value: gx.geoOgTags   ?? null },
+    { label: 'OG:Image vorhanden',                   value: gx.geoOgImage  ?? null },
+    { label: 'Alt-Tags bei > 80% der Bilder',        value: gx.geoImgAlt   ?? null },
+    { label: 'Canonical-URL gesetzt',                value: gx.geoCanonical ?? null },
   ], _suggest(GEO_SUGGESTIONS.tech, gc.tech ?? 0));
+
+  // K6: LLM-Plattform-Optimierung
+  drawCategoryBlock('LLM-Plattform-Optimierung', 'Gewichtung 10 % · ' + (gr.k6 ?? 0) + '/10 Punkte', gc.llm ?? 0, [
+    { label: 'Region / Marke in H1 (ChatGPT-Faktor)',          value: gx.regionInH1       ?? null },
+    { label: '"Laut..."-Formulierungen vorhanden (ChatGPT)',    value: gx.accordingTo      ?? null },
+    { label: 'How-To-Struktur erkennbar (ChatGPT)',             value: gx.howToStructure   ?? null },
+    { label: 'Autor prominent sichtbar (Perplexity)',           value: gx.prominentAuthor  ?? null },
+    { label: 'Zitierbare Kernaussage hervorgehoben (Perplexity)', value: gx.quotableStatement ?? null },
+    { label: 'Research-backed Content (Perplexity)',            value: gx.researchContent  ?? null },
+    { label: 'Scannable Formatting: H2 ≥ 4 + Listen (Perplexity)', value: gx.scannableFormat ?? null },
+    { label: 'Methodology-Dokumentation vorhanden (Claude)',    value: gx.methodologyContent ?? null },
+    { label: 'Case Study mit Ergebnis (Claude)',                value: gx.caseStudyContent ?? null },
+    { label: 'Sachlicher Ton ohne Übertreibungen (Claude)',     value: gx.sachlicherTon    ?? null },
+  ], _suggest(GEO_SUGGESTIONS.llm, gc.llm ?? 0));
 
   // ── Footer ────────────────────────────────────────────────────────────────
   const totalPages = doc.getNumberOfPages();
